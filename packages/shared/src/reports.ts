@@ -1,6 +1,6 @@
 /** Enclave reports (borsh) and their signatures, mirroring `enclave/core/src/report.rs`. */
 import { ed25519 } from "@noble/curves/ed25519";
-import { BorshReader, bytesToHex, concatBytes, utf8 } from "./bytes.ts";
+import { BorshReader, BorshWriter, bytesToHex, concatBytes, hexToBytes, utf8 } from "./bytes.ts";
 
 export const REPORT_DOMAIN = utf8("blindstop:v1:report");
 export const REPORT_KIND_FIRE = 0;
@@ -62,4 +62,18 @@ export function verifyReport(kind: number, borsh: Uint8Array, sig: Uint8Array, e
   } catch {
     return false;
   }
+}
+
+export function encodeFireReport(r: FireReport): Uint8Array {
+  return new BorshWriter()
+    .string(r.contractId)
+    .u64(r.orderId)
+    .fixed(hexToBytes(r.commitment), 32)
+    .fixed(hexToBytes(r.hlCloid), 16)
+    .u64(r.hlOid)
+    .string(r.avgPx)
+    .string(r.filledSz)
+    .u8(OUTCOMES.indexOf(r.outcome))
+    .u64(r.tsMs)
+    .bytes();
 }

@@ -3,7 +3,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { recoverMessageAddress } from "viem";
 import vectors from "./vectors.json";
 import {
-  aad, bytesToHex, commitmentOf, decodeFireReport, decodeHeartbeat, decodeOrder, encodeOrder, hexToBytes,
+  aad, bytesToHex, encodeFireReport, commitmentOf, decodeFireReport, decodeHeartbeat, decodeOrder, encodeOrder, hexToBytes,
   openEnvelope, pad, reportSignedBytes, sealPadded, unpad, verifyReport, walletBindingMessage, type SealedOrder,
 } from "../src/index.ts";
 
@@ -72,6 +72,7 @@ describe("shared vectors (Rust ⇄ TypeScript)", () => {
     expect(fire.orderId).toBe(BigInt(f.report.order_id));
     expect(fire.avgPx).toBe(f.report.avg_px);
     expect(fire.outcome).toBe("filled");
+    expect(bytesToHex(encodeFireReport(fire))).toBe(f.borsh);
     const h = vectors.reports.heartbeat;
     expect(verifyReport(1, hexToBytes(h.borsh), hexToBytes(h.sig), pub)).toBe(true);
     expect(decodeHeartbeat(hexToBytes(h.borsh)).ordersSeen).toBe(h.report.orders_seen);

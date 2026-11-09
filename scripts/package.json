@@ -1,0 +1,14 @@
+{
+  "name": "@blindstop/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "attacks": "node attacks.ts"
+  },
+  "dependencies": {
+    "@blindstop/shared": "workspace:*",
+    "viem": "2.38.6",
+    "@noble/curves": "1.9.7"
+  }
+}

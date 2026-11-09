@@ -8,7 +8,7 @@ use blindstop_harness::{keystore, run_all, wasm::WasmEnclave, CONTRACT};
 fn main() -> anyhow::Result<()> {
     let path = std::env::args()
         .nth(1)
-        .unwrap_or_else(|| "enclave/room/target/wasm32-wasip2/release/blindstop-room.wasm".into());
+        .unwrap_or_else(|| "target/harness-wasm/wasm32-wasip2/release/blindstop-room.wasm".into());
     let mut enclave = WasmEnclave::load(&path, keystore())?;
 
     // The manifest is part of the attested wasm: check what it grants.
