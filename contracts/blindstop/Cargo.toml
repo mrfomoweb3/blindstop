@@ -1,0 +1,28 @@
+[package]
+name = "blindstop-contract"
+description = "Blindstop NEAR contract: sealed stop orders, commitments, and enclave-signed settlement."
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "=5.29.1"
+sha2 = "0.10"
+hex = "0.4"
+
+[dev-dependencies]
+near-sdk = { version = "=5.29.1", features = ["unit-testing"] }
+ed25519-dalek = "2"
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true

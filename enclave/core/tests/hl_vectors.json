@@ -1,0 +1,136 @@
+{
+  "sdk": "hyperliquid-python-sdk 0.24.0",
+  "agent_key": "0x1111111111111111111111111111111111111111111111111111111111111111",
+  "agent_address": "0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A",
+  "user_key": "0x2222222222222222222222222222222222222222222222222222222222222222",
+  "l1": [
+    {
+      "name": "close_long_btc_testnet",
+      "is_mainnet": false,
+      "nonce": 1762700000000,
+      "asset": 3,
+      "is_buy": false,
+      "px": "74439",
+      "sz": "0.001",
+      "cloid": "0xabababababababababababababababab",
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":false,\"p\":\"74439\",\"s\":\"0.001\",\"r\":true,\"t\":{\"limit\":{\"tif\":\"Ioc\"}},\"c\":\"0xabababababababababababababababab\"}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739187a16103a162c2a170a53734343339a173a5302e303031a172c3a17481a56c696d697481a3746966a3496f63a163d92230786162616261626162616261626162616261626162616261626162616261626162a867726f7570696e67a26e61",
+      "connection_id": "0x6f9f4dda2e2ca88148dd48981c269048c0cd264211d445a303f212ef8ef2d096",
+      "signature": {
+        "r": "0x8e3b6bd966129460ab52262c1de4a9a4c00400c386dfb1194e8f94d41e21d0fb",
+        "s": "0x0ca9f62ef0966402fc1ab88deb97334952db3f57882e88b30772c1117ee25d04",
+        "v": 27
+      }
+    },
+    {
+      "name": "close_short_eth_mainnet",
+      "is_mainnet": true,
+      "nonce": 1762700000001,
+      "asset": 1,
+      "is_buy": true,
+      "px": "1891.4",
+      "sz": "0.0123",
+      "cloid": "0x01010101010101010101010101010101",
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":1,\"b\":true,\"p\":\"1891.4\",\"s\":\"0.0123\",\"r\":true,\"t\":{\"limit\":{\"tif\":\"Ioc\"}},\"c\":\"0x01010101010101010101010101010101\"}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739187a16101a162c3a170a6313839312e34a173a6302e30313233a172c3a17481a56c696d697481a3746966a3496f63a163d92230783031303130313031303130313031303130313031303130313031303130313031a867726f7570696e67a26e61",
+      "connection_id": "0xff8aff62b4fcb672e49648d802e51936621c378db33638b43c0960a87ebecf14",
+      "signature": {
+        "r": "0x0a501f4458493e42601d503d74ae6393affe0b3dd049b545a2406884e4a0b5d8",
+        "s": "0x65b268205eee68e07bfcdb2b03f37e63c85deb7256bf911cee6fdab9f2b1f619",
+        "v": 27
+      }
+    },
+    {
+      "name": "close_long_sol_testnet",
+      "is_mainnet": false,
+      "nonce": 1762700000123,
+      "asset": 0,
+      "is_buy": false,
+      "px": "86.615",
+      "sz": "12.5",
+      "cloid": "0x00112233445566778899aabbccddeeff",
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":0,\"b\":false,\"p\":\"86.615\",\"s\":\"12.5\",\"r\":true,\"t\":{\"limit\":{\"tif\":\"Ioc\"}},\"c\":\"0x00112233445566778899aabbccddeeff\"}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739187a16100a162c2a170a638362e363135a173a431322e35a172c3a17481a56c696d697481a3746966a3496f63a163d92230783030313132323333343435353636373738383939616162626363646465656666a867726f7570696e67a26e61",
+      "connection_id": "0x1b247faef4fd41a14739d7e54996755196f5bb7d3a1c6b51d01ac307ce9c0ef0",
+      "signature": {
+        "r": "0x683d9ca280ea1a12e34983117e47ee1460c3de47a7560b9485445d42e5c9d343",
+        "s": "0x69055749274e35fe305901c930eaf0253b27905b03e33b5a9da1d86cf1c239f5",
+        "v": 27
+      }
+    },
+    {
+      "name": "small_price_mainnet",
+      "is_mainnet": true,
+      "nonce": 1762800000000,
+      "asset": 150,
+      "is_buy": true,
+      "px": "0.001234",
+      "sz": "1234",
+      "cloid": "0xffffffffffffffffffffffffffffffff",
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":150,\"b\":true,\"p\":\"0.001234\",\"s\":\"1234\",\"r\":true,\"t\":{\"limit\":{\"tif\":\"Ioc\"}},\"c\":\"0xffffffffffffffffffffffffffffffff\"}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739187a161cc96a162c3a170a8302e303031323334a173a431323334a172c3a17481a56c696d697481a3746966a3496f63a163d92230786666666666666666666666666666666666666666666666666666666666666666a867726f7570696e67a26e61",
+      "connection_id": "0x50411f4b8a422b7a816671dcf3db3be8d16830e382b92a9040387bc5047ece67",
+      "signature": {
+        "r": "0x28a62c0f5f01c487c41bf962551a5f1c41bf2170ea800e6c25138dfc52767bc0",
+        "s": "0x5c84e01ce593c905f4b0f4fd82ce172072693cc547f0e65337312650d46f10fc",
+        "v": 28
+      }
+    },
+    {
+      "name": "large_asset_index",
+      "is_mainnet": false,
+      "nonce": 18446744073709,
+      "asset": 200,
+      "is_buy": false,
+      "px": "1.2345",
+      "sz": "3",
+      "cloid": "0x7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":200,\"b\":false,\"p\":\"1.2345\",\"s\":\"3\",\"r\":true,\"t\":{\"limit\":{\"tif\":\"Ioc\"}},\"c\":\"0x7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f\"}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739187a161ccc8a162c2a170a6312e32333435a173a133a172c3a17481a56c696d697481a3746966a3496f63a163d92230783766376637663766376637663766376637663766376637663766376637663766a867726f7570696e67a26e61",
+      "connection_id": "0xf898b516b31550a6c2e13c2336bd411949aa0106de5bada411e06045fb1f8e91",
+      "signature": {
+        "r": "0x845cd328928bcb16574a2e4a8b0675777af3af644af1b984290920cce5e2c2a0",
+        "s": "0x59bc0aedf05137079344e2403cc2df238be9de8013a71e6923ec6e2dc6d137f9",
+        "v": 27
+      }
+    }
+  ],
+  "approve_agent": [
+    {
+      "is_mainnet": false,
+      "user": "0x1563915e194D8CfBA1943570603F7606A3115508",
+      "agent_address": "0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A",
+      "agent_name": "blindstop",
+      "nonce": 1762700000000,
+      "signature": {
+        "r": "0x97443ae0d763cceee0535677d395c85a80585f2f171313124e4d7aa8c98fe1c6",
+        "s": "0x5741c25d318cf10dc136cd0232e04d51f3db9e8dc10da54efc5862848cd646a1",
+        "v": 27
+      }
+    },
+    {
+      "is_mainnet": true,
+      "user": "0x1563915e194D8CfBA1943570603F7606A3115508",
+      "agent_address": "0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A",
+      "agent_name": "blindstop",
+      "nonce": 1762700000000,
+      "signature": {
+        "r": "0x07c01d954483614b4872a3af49d55fa81724aadf16c4312044a3db2b7274608b",
+        "s": "0x4ab42fb4a9493a7c12d87735a7612332c8b5ec5870b0ed24255df7ff4485c6c9",
+        "v": 28
+      }
+    }
+  ],
+  "personal_sign": [
+    {
+      "message": "hello",
+      "signer": "0x1563915e194D8CfBA1943570603F7606A3115508",
+      "signature": "0x1b45716596d11d870d423dc25a27e1a011e6d71470ed9d9c05fe6e7e2d9dedc80b3739b0a395e7b9dc30547cb9b4cfe261d6c92210d15397a37a95b2f88620cc1b"
+    },
+    {
+      "message": "Blindstop: example binding\n\nline two",
+      "signer": "0x1563915e194D8CfBA1943570603F7606A3115508",
+      "signature": "0x179bcfd39d2ec167fa8d7ec8906e8031845639910d6d125c8178e25475354fd46c66140a7f9c6c7ed156faea68e391af05eee7186580a4579734938994ad42661b"
+    }
+  ]
+}

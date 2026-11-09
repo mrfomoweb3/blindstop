@@ -1,0 +1,16 @@
+target/
+node_modules/
+.next/
+out/
+dist/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.venv/
+*.tsbuildinfo
+.vercel
+keeper/.data/
+deploy/*.json
+!deploy/README.md

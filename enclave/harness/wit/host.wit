@@ -1,0 +1,9 @@
+// The OutLayer host interfaces the Blindstop component imports. The files in deps/ are
+// copied unmodified from the `outlayer` crate 0.2.1 (wit/deps).
+package blindstop:harness;
+
+world host {
+    import near:storage/api@0.2.0;
+    import outlayer:signing-keys/api@0.1.0;
+    import outlayer:encryption-keys/api@0.1.0;
+}
