@@ -15,6 +15,7 @@ from eth_account import Account
 from eth_account.messages import encode_defunct
 from hyperliquid.utils.signing import (
     action_hash,
+    sign_withdraw_from_bridge_action,
     order_request_to_order_wire,
     order_wires_to_order_action,
     sign_agent,
@@ -80,6 +81,42 @@ def approve_agent_case(mainnet):
     }
 
 
+def withdraw_case(mainnet):
+    user = Account.from_key(USER_KEY)
+    action = {"type": "withdraw3", "destination": user.address, "amount": "12.5", "time": 1762700000000}
+    signed_action = dict(action)
+    sig = sign_withdraw_from_bridge_action(user, signed_action, mainnet)
+    return {
+        "is_mainnet": mainnet,
+        "destination": user.address,
+        "amount": "12.5",
+        "time": 1762700000000,
+        "signature": {"r": "0x" + int(sig["r"], 16).to_bytes(32, "big").hex(), "s": "0x" + int(sig["s"], 16).to_bytes(32, "big").hex(), "v": sig["v"]},
+    }
+
+
+def backstop_case():
+    """The public backstop the user may place with their own key: reduce-only stop-market."""
+    user = Account.from_key(USER_KEY)
+    order = {
+        "coin": "X",
+        "is_buy": False,
+        "sz": 0.01,
+        "limit_px": 60000.0,
+        "order_type": {"trigger": {"triggerPx": 66000.0, "isMarket": True, "tpsl": "sl"}},
+        "reduce_only": True,
+    }
+    action = order_wires_to_order_action([order_request_to_order_wire(order, 3)], None, "na")
+    nonce = 1762700000555
+    sig = sign_l1_action(user, action, None, nonce, None, False)
+    return {
+        "action_json": json.dumps(action, separators=(",", ":")),
+        "msgpack_hex": msgpack.packb(action).hex(),
+        "nonce": nonce,
+        "signature": {"r": "0x" + int(sig["r"], 16).to_bytes(32, "big").hex(), "s": "0x" + int(sig["s"], 16).to_bytes(32, "big").hex(), "v": sig["v"]},
+    }
+
+
 def personal_sign_case(message):
     user = Account.from_key(USER_KEY)
     signed = Account.sign_message(encode_defunct(text=message), USER_KEY)
@@ -93,6 +130,8 @@ out = {
     "user_key": USER_KEY,
     "l1": [l1_case(*c) for c in CASES],
     "approve_agent": [approve_agent_case(False), approve_agent_case(True)],
+    "withdraw": [withdraw_case(False), withdraw_case(True)],
+    "backstop": backstop_case(),
     "personal_sign": [personal_sign_case("hello"), personal_sign_case("Blindstop: example binding\n\nline two")],
 }
 print(json.dumps(out, indent=2))

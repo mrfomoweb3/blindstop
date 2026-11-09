@@ -121,6 +121,40 @@
       }
     }
   ],
+  "withdraw": [
+    {
+      "is_mainnet": false,
+      "destination": "0x1563915e194D8CfBA1943570603F7606A3115508",
+      "amount": "12.5",
+      "time": 1762700000000,
+      "signature": {
+        "r": "0x12b2d15c1b0e110724bcbc39b5226744840029e530b6dee9d6bba92d2537e348",
+        "s": "0x3a7f49cc312cf90ab83c0d63d8dc238fa137ca54defaf468ce3344c7269c6525",
+        "v": 27
+      }
+    },
+    {
+      "is_mainnet": true,
+      "destination": "0x1563915e194D8CfBA1943570603F7606A3115508",
+      "amount": "12.5",
+      "time": 1762700000000,
+      "signature": {
+        "r": "0xb6edefb719653a079da3baa7f993b6135e5698c96f37b4b329f5a4ba02bb8da6",
+        "s": "0x40fd9335ce02c5459ccb1727b2661e5ebbfcf78e46edbf5b61f1780079c6690b",
+        "v": 28
+      }
+    }
+  ],
+  "backstop": {
+    "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":false,\"p\":\"60000\",\"s\":\"0.01\",\"r\":true,\"t\":{\"trigger\":{\"isMarket\":true,\"triggerPx\":\"66000\",\"tpsl\":\"sl\"}}}],\"grouping\":\"na\"}",
+    "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a16103a162c2a170a53630303030a173a4302e3031a172c3a17481a77472696767657283a869734d61726b6574c3a9747269676765725078a53636303030a47470736ca2736ca867726f7570696e67a26e61",
+    "nonce": 1762700000555,
+    "signature": {
+      "r": "0x4c1bd18dea381b5dee52689ae5625120d02e530aa9e89113969747641f8e6431",
+      "s": "0x57bf7e08f6f633a70b9a321c15bed0479f561f31d3ae9454fed8bfdb7d352df7",
+      "v": 28
+    }
+  },
   "personal_sign": [
     {
       "message": "hello",

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { privateKeyToAccount } from "viem/accounts";
 import hl from "../../../enclave/core/tests/hl_vectors.json";
-import { actionHash, bytesToHex, formatDec, msgpack, parseDec, roundPerpPx, signApproveAgent, signL1Action } from "../src/index.ts";
+import { actionHash, backstopAction, bytesToHex, formatDec, msgpack, parseDec, roundPerpPx, signApproveAgent, signL1Action, signWithdraw } from "../src/index.ts";
 
 describe("Hyperliquid signing vs hyperliquid-python-sdk 0.24.0", () => {
   const agent = privateKeyToAccount(hl.agent_key as `0x${string}`);
@@ -21,6 +21,20 @@ describe("Hyperliquid signing vs hyperliquid-python-sdk 0.24.0", () => {
       expect(signature).toEqual(c.signature);
     });
   }
+  for (const c of hl.withdraw) {
+    it(`withdraw ${c.is_mainnet ? "mainnet" : "testnet"}`, async () => {
+      const user = privateKeyToAccount(hl.user_key as `0x${string}`);
+      const { signature } = await signWithdraw(user, c.destination as `0x${string}`, c.amount, c.time, c.is_mainnet ? "mainnet" : "testnet");
+      expect(signature).toEqual(c.signature);
+    });
+  }
+  it("public backstop stop-market (user's own key)", async () => {
+    const user = privateKeyToAccount(hl.user_key as `0x${string}`);
+    const action = backstopAction({ asset: 3, closeIsBuy: false, triggerPx: "66000", limitPx: "60000", size: "0.01" });
+    expect(JSON.stringify(action)).toBe(hl.backstop.action_json);
+    expect(bytesToHex(Uint8Array.from(msgpack(action)))).toBe(hl.backstop.msgpack_hex);
+    expect(await signL1Action(user, action, hl.backstop.nonce, "testnet")).toEqual(hl.backstop.signature);
+  });
 });
 
 describe("price rounding mirrors the enclave", () => {

@@ -1,0 +1,12 @@
+{
+  "network": "testnet",
+  "contract": "blindstop.testnet",
+  "owner": "blindstop-watch.testnet",
+  "keeper_account": "blindstop-keeper.testnet",
+  "outlayer_project": "blindstop-watch.testnet/blindstop-watcher",
+  "wasm_sha256": "4bc6d150f2405b9b757b386e8cd560eaebc6fdfbdb2ad680373085637e6f639a",
+  "wasm_url": "https://test.fastfs.io/blindstop-watch.testnet/outlayer.testnet/4bc6d150f2405b9b757b386e8cd560eaebc6fdfbdb2ad680373085637e6f639a.wasm",
+  "enclave_x25519": "edb14684523cb4f9e770cc65c14d3be12b77a91d846057fb60f43330b2e19d09",
+  "enclave_ed25519": "8e355b62a866b2d9a9aa148daefbf8c92ad7c5afe3292cc4ae5ec047c05a7293",
+  "agent_address": "0xad9043b5f362ea82986e035d6ddb2a684f01e077"
+}

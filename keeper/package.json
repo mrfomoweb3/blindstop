@@ -1,0 +1,22 @@
+{
+  "name": "@blindstop/keeper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Calls the Blindstop enclave on OutLayer every few seconds and settles its signed reports on NEAR. Stateless; anyone holding an operator payment key can run one.",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "start": "node src/main.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@blindstop/shared": "workspace:*",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "22.18.12",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

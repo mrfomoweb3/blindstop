@@ -5,3 +5,4 @@ export * from "./seal.ts";
 export * from "./reports.ts";
 export * from "./hl.ts";
 export * from "./contract.ts";
+export * from "./near-tx.ts";

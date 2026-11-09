@@ -12,5 +12,4 @@ dist/
 *.tsbuildinfo
 .vercel
 keeper/.data/
-deploy/*.json
-!deploy/README.md
+deploy/*.wasm

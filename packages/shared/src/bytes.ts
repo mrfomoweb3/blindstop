@@ -91,7 +91,10 @@ export class BorshWriter {
 
 export class BorshReader {
   private o = 0;
-  constructor(private readonly b: Uint8Array) {}
+  private readonly b: Uint8Array;
+  constructor(b: Uint8Array) {
+    this.b = b;
+  }
   private take(n: number): Uint8Array {
     if (this.o + n > this.b.length) throw new Error("borsh: unexpected end of input");
     const out = this.b.subarray(this.o, this.o + n);
