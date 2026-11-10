@@ -1,4 +1,4 @@
-.PHONY: help test test-rust test-contract test-ts harness build build-contract build-enclave web keeper attacks vectors verify
+.PHONY: golden help test test-rust test-contract test-ts harness build build-contract build-enclave web keeper attacks vectors verify
 
 BLINDSTOP_CONTRACT ?= blindstop.testnet
 
@@ -36,6 +36,9 @@ keeper:          ## run the keeper (reads keeper/.env)
 
 attacks:         ## live attacks against the deployed contract + enclave (needs OUTLAYER_PAYMENT_KEY)
 	node scripts/attacks.ts
+
+golden:          ## live golden path on Hyperliquid testnet (needs OUTLAYER_PAYMENT_KEY + a funded trading wallet)
+	node scripts/golden-path.ts
 
 vectors:         ## regenerate the Rust/TS vectors (Python SDK vectors: see scripts/hl_vectors.py)
 	cargo run -q -p blindstop-core --example vectors > packages/shared/test/vectors.json
