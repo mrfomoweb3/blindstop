@@ -115,7 +115,7 @@ enclave/room          the OutLayer component (wasm32-wasip2): binds core to OutL
 enclave/harness       runs the real wasm under wasmtime against fixtures and a signature-checking fake /exchange
 packages/shared       TypeScript: formats, sealing, Hyperliquid signing, NEAR tx signing, contract views
 keeper                Node 24 service: tick loop, settlement, /health, /metrics, Dockerfile, fly.toml
-web                   Next.js 15 app: onboarding, positions, sealing, orders, verify, watcher
+web                   Next.js 15 app: onboarding, a trade panel, hidden stops, history, proof checks, status
 scripts               attacks.ts, harness.sh, hl_vectors.py
 docs                  spikes, threat model, operations, demo script
 ```
