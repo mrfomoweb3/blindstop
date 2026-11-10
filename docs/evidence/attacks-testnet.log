@@ -1,0 +1,26 @@
+# contract blindstop.testnet · enclave blindstop-watch.testnet/blindstop-watcher · ed25519 8e355b62a866b2d9…
+
+# placed P=5 (Alice, armed) Q=6 (Alice, crossed) M=7 (Mallory's copy of P) V=8 (Mallory → Alice's wallet)
+
+ok  1. forged fire report signature → refused
+      signature does not verify against the enclave key (tx BX6QqJMtrYzAsaBh8H5bmBq6nExfpT4qKxFXqpHU4ckP)
+ok  3. valid report for one order submitted as another → refused
+      signature does not verify against the enclave key (tx 9ADUqjz2GGFUWsU6VibGGz67QpW3kxqXqAqJA1kC4V4C)
+    (genuine enclave report for Q settled by a third party: tx AjQgGT7C6aQmDTJCGKpYBnkU1FytQRR5HAj79WGTTDTH)
+ok  2. valid report replayed → refused
+      order is not active (already settled or cancelled) (tx 9o9kXiRBYR4uP4rvWJKHFNSycUomwejqW8eK7vn7LP16)
+ok  4. keeper input with fake prices and orders → ignored
+      order 5 (armed at 1) never reported across every tick; enclave call eff8704f-77ca-4cd6-ab98-a33bbcef8d5d
+ok  5. NEAR RPCs disagree → enclave refuses to act
+      real wasm under enclave/harness with RPC B hiding an order
+ok  6. Alice's ciphertext replayed under Mallory's account → enclave refuses to decrypt
+      order 7 retired as invalid (tx FisYh6wZzebfuT6mrEKBZcBXzByThkNKbGrz8j9Ro2R1)
+ok  9. order naming another user's trading wallet → retired as invalid, never sent
+      order 8 (tx A2NfWmmex7dmE7XPQJUddzLgNtv8J6BFUMUPyUuzfVDJ)
+ok  7. non-owner cancel and reveal → refused
+      only the order's owner can cancel it / only the order's owner can reveal it
+ok  8. reveal with a wrong preimage → refused (the right one is accepted)
+      preimage does not match the commitment; correct reveal tx 5zPJSAfpZ4edx32eadspJGUUEos9FQV3aFSE4XVSUtPE
+
+9 attacks, all refused. Revealed order 6 can be checked on /verify.
+ALL ATTACKS REFUSED

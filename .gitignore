@@ -1,15 +1,44 @@
+# ── build output ──────────────────────────────
 target/
-node_modules/
-.next/
-out/
 dist/
-*.log
+out/
+.next/
+*.tsbuildinfo
+deploy/*.wasm
+
+# ── dependencies ──────────────────────────────
+node_modules/
+.pnpm-store/
+.venv/
+__pycache__/
+*.pyc
+
+# ── secrets: never commit ─────────────────────
 .env
 .env.*
 !.env.example
-.DS_Store
-.venv/
-*.tsbuildinfo
-.vercel
+*.pem
+*.key
+*.p12
+credentials.json
+payment-keys.json
+*-wallet.json
+*.backup.json
+blindstop-backup-*.json
+.near-credentials/
+.blindstop-outlayer/
+
+# ── local state ───────────────────────────────
 keeper/.data/
-deploy/*.wasm
+.vercel
+.fly/
+coverage/
+*.log
+!docs/evidence/*.log
+
+# ── editors / OS ──────────────────────────────
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
