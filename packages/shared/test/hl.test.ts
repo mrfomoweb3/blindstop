@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { privateKeyToAccount } from "viem/accounts";
 import hl from "../../../enclave/core/tests/hl_vectors.json";
-import { actionHash, backstopAction, bytesToHex, formatDec, msgpack, parseDec, roundPerpPx, signApproveAgent, signL1Action, signWithdraw } from "../src/index.ts";
+import { actionHash, backstopAction, marketOrderAction, updateLeverageAction, bytesToHex, formatDec, msgpack, parseDec, roundPerpPx, signApproveAgent, signL1Action, signWithdraw } from "../src/index.ts";
 
 describe("Hyperliquid signing vs hyperliquid-python-sdk 0.24.0", () => {
   const agent = privateKeyToAccount(hl.agent_key as `0x${string}`);
@@ -34,6 +34,17 @@ describe("Hyperliquid signing vs hyperliquid-python-sdk 0.24.0", () => {
     expect(JSON.stringify(action)).toBe(hl.backstop.action_json);
     expect(bytesToHex(Uint8Array.from(msgpack(action)))).toBe(hl.backstop.msgpack_hex);
     expect(await signL1Action(user, action, hl.backstop.nonce, "testnet")).toEqual(hl.backstop.signature);
+  });
+  it("trade panel: set leverage and open a market order (user's own key)", async () => {
+    const user = privateKeyToAccount(hl.user_key as `0x${string}`);
+    const lev = updateLeverageAction(3, false, 3);
+    expect(JSON.stringify(lev)).toBe(hl.trading.update_leverage.action_json);
+    expect(bytesToHex(Uint8Array.from(msgpack(lev)))).toBe(hl.trading.update_leverage.msgpack_hex);
+    expect(await signL1Action(user, lev, hl.trading.update_leverage.nonce, "testnet")).toEqual(hl.trading.update_leverage.signature);
+    const open = marketOrderAction({ asset: 3, isBuy: true, limitPx: "76000", size: "0.0007", reduceOnly: false });
+    expect(JSON.stringify(open)).toBe(hl.trading.market_open.action_json);
+    expect(bytesToHex(Uint8Array.from(msgpack(open)))).toBe(hl.trading.market_open.msgpack_hex);
+    expect(await signL1Action(user, open, hl.trading.market_open.nonce, "testnet")).toEqual(hl.trading.market_open.signature);
   });
 });
 

@@ -117,6 +117,34 @@ def backstop_case():
     }
 
 
+def hexsig(sig):
+    return {"r": "0x" + int(sig["r"], 16).to_bytes(32, "big").hex(), "s": "0x" + int(sig["s"], 16).to_bytes(32, "big").hex(), "v": sig["v"]}
+
+
+def trading_cases():
+    """What the app's trade panel signs with the user's own key: set leverage, open a market order."""
+    user = Account.from_key(USER_KEY)
+    lev = {"type": "updateLeverage", "asset": 3, "isCross": False, "leverage": 3}
+    lev_nonce = 1762700000777
+    order = {"coin": "X", "is_buy": True, "sz": 0.0007, "limit_px": 76000.0, "order_type": {"limit": {"tif": "Ioc"}}, "reduce_only": False}
+    open_action = order_wires_to_order_action([order_request_to_order_wire(order, 3)], None, "na")
+    open_nonce = 1762700000888
+    return {
+        "update_leverage": {
+            "action_json": json.dumps(lev, separators=(",", ":")),
+            "msgpack_hex": msgpack.packb(lev).hex(),
+            "nonce": lev_nonce,
+            "signature": hexsig(sign_l1_action(user, lev, None, lev_nonce, None, False)),
+        },
+        "market_open": {
+            "action_json": json.dumps(open_action, separators=(",", ":")),
+            "msgpack_hex": msgpack.packb(open_action).hex(),
+            "nonce": open_nonce,
+            "signature": hexsig(sign_l1_action(user, open_action, None, open_nonce, None, False)),
+        },
+    }
+
+
 def personal_sign_case(message):
     user = Account.from_key(USER_KEY)
     signed = Account.sign_message(encode_defunct(text=message), USER_KEY)
@@ -132,6 +160,7 @@ out = {
     "approve_agent": [approve_agent_case(False), approve_agent_case(True)],
     "withdraw": [withdraw_case(False), withdraw_case(True)],
     "backstop": backstop_case(),
+    "trading": trading_cases(),
     "personal_sign": [personal_sign_case("hello"), personal_sign_case("Blindstop: example binding\n\nline two")],
 }
 print(json.dumps(out, indent=2))

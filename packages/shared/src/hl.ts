@@ -321,3 +321,41 @@ export async function placeBackstop(account: LocalAccount, network: HlNetwork, p
   const signature = await signL1Action(account, action, nonce, network);
   return hlExchange(network, action, nonce, signature);
 }
+
+// ─────────────── trading from the app (the user's own key) ───────────────
+
+/**
+ * A market order the way the official SDK sends one: an IOC limit order priced through the
+ * book by a slippage bound, so it fills now or not at all.
+ */
+export function marketOrderAction(p: { asset: number; isBuy: boolean; limitPx: string; size: string; reduceOnly: boolean }): Record<string, MsgValue> {
+  return {
+    type: "order",
+    orders: [{ a: p.asset, b: p.isBuy, p: p.limitPx, s: p.size, r: p.reduceOnly, t: { limit: { tif: "Ioc" } } }],
+    grouping: "na",
+  };
+}
+
+/** Key order as in the SDK's `update_leverage`: type, asset, isCross, leverage. */
+export function updateLeverageAction(asset: number, isCross: boolean, leverage: number): Record<string, MsgValue> {
+  if (!Number.isInteger(leverage) || leverage < 1) throw new Error("leverage must be a whole number of at least 1");
+  return { type: "updateLeverage", asset, isCross, leverage };
+}
+
+export type FillResult = { filled: true; size: string; avgPx: string } | { filled: false; reason: string };
+
+/** Reads the first status of an order answer. */
+export function readFill(answer: ExchangeAnswer): FillResult {
+  const st = (answer.response as { data?: { statuses?: Record<string, unknown>[] } })?.data?.statuses?.[0];
+  if (st && "filled" in st) {
+    const f = st.filled as { totalSz: string; avgPx: string };
+    return { filled: true, size: f.totalSz, avgPx: f.avgPx };
+  }
+  if (st && "error" in st) return { filled: false, reason: String(st.error) };
+  return { filled: false, reason: "no fill" };
+}
+
+export async function sendL1(account: LocalAccount, network: HlNetwork, action: Record<string, MsgValue>): Promise<ExchangeAnswer> {
+  const nonce = Date.now();
+  return hlExchange(network, action, nonce, await signL1Action(account, action, nonce, network));
+}

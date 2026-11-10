@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ApproveStep, useAgentApproved } from "@/components/app/ApproveStep";
 import { ExitPanel } from "@/components/app/ExitPanel";
+import { TradePanel } from "@/components/app/TradePanel";
 import { FundStep } from "@/components/app/FundStep";
 import { PositionCard } from "@/components/app/PositionCard";
 import { Step } from "@/components/app/Step";
@@ -136,13 +137,16 @@ export default function AppPage() {
           )}
 
           {ch.error && <Notice tone="bad">We can&rsquo;t reach Hyperliquid right now. Your hidden stops are still being watched; this only affects this page.</Notice>}
+          <TradePanel
+            perps={perps.data}
+            available={Number(ch.data?.withdrawable ?? 0)}
+            onTraded={() => {
+              ch.reload();
+              oo.reload();
+            }}
+          />
           {positions.length === 0 && ch.data && (
-            <Panel title="No open trades yet">
-              <p className="text-sm text-soft">
-                Open a trade with this wallet on <a className="underline" href={`${HL_APP}/trade`} target="_blank" rel="noreferrer">Hyperliquid</a>,
-                then come back here to hide its stop-loss. Blindstop protects your trades; it never opens them for you.
-              </p>
-            </Panel>
+            <p className="text-sm text-muted text-center">Open a trade above, then hide its stop-loss here. It takes a few seconds.</p>
           )}
           <div className="grid lg:grid-cols-2 gap-4">
             {positions.map((p) => (

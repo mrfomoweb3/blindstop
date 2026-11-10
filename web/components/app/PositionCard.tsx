@@ -2,14 +2,14 @@
 
 import { friendly } from "@/lib/errors";
 import { useMemo, useState } from "react";
-import { normalizeDecimalInput, parseDec, parseSignedDec, type EnclaveKeys, type OpenOrder, type OrderView, type PerpAsset, type Position } from "@blindstop/shared";
+import { formatDec, marketOrderAction, mulRatio, normalizeDecimalInput, parseDec, parseSignedDec, readFill, roundPerpPx, sendL1, type EnclaveKeys, type OpenOrder, type OrderView, type PerpAsset, type Position } from "@blindstop/shared";
 import { HL_NETWORK } from "@/lib/config";
 import { absSize, distancePct, px, usd } from "@/lib/format";
 import { useNear } from "@/lib/near";
 import { backstopFor, placePublicBackstop, sealAndPlace, type Draft } from "@/lib/orders";
 import { useTrading } from "@/lib/trading";
 import type { LocalOrder } from "@/lib/vault";
-import { cx, Input, Label, Notice, Pill, SealButton } from "../ui";
+import { Button, cx, Input, Label, Notice, Pill, SealButton } from "../ui";
 
 export function PositionCard({
   position,
@@ -50,6 +50,7 @@ export function PositionCard({
           {pnl >= 0 ? "+" : ""}
           {usd(position.unrealizedPnl)}
         </span>
+        <CloseButton position={position} asset={asset} isLong={isLong} onDone={onPlaced} />
       </header>
 
       <div className="grid grid-cols-3 gap-3 px-4 sm:px-5 py-3 border-b border-line text-sm">
@@ -88,6 +89,42 @@ export function PositionCard({
 
       <SealForm position={position} asset={asset} keys={keys} isLong={isLong} backstopOn={backstopOn && publicTriggers.length === 0} onPlaced={onPlaced} />
     </article>
+  );
+}
+
+function CloseButton({ position, asset, isLong, onDone }: { position: Position; asset: PerpAsset | undefined; isLong: boolean; onDone: () => void }) {
+  const t = useTrading();
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const close = async () => {
+    if (!t.account || !asset?.markPx) return;
+    if (!window.confirm(`Close your whole ${position.coin} position now, at the market price?`)) return;
+    setErr(null);
+    setBusy(true);
+    try {
+      const mark = parseDec(asset.markPx);
+      const isBuy = !isLong;
+      const limit = roundPerpPx(mulRatio(mark, isBuy ? 10_200n : 9_800n, 10_000n, isBuy ? "up" : "down"), asset.szDecimals, isBuy ? "up" : "down");
+      const answer = await sendL1(
+        t.account,
+        HL_NETWORK,
+        marketOrderAction({ asset: asset.index, isBuy, limitPx: formatDec(limit), size: absSize(position.szi), reduceOnly: true }),
+      );
+      if (!readFill(answer).filled) throw new Error("Couldn't close right now: not enough on offer near the price. Try again.");
+      onDone();
+    } catch (e) {
+      setErr(friendly(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <span className="flex items-center gap-2">
+      {err && <span className="text-xs text-bad max-w-[16rem] truncate" title={err}>{err}</span>}
+      <Button variant="secondary" className="h-8 px-3 text-xs" busy={busy} onClick={close}>
+        Close trade
+      </Button>
+    </span>
   );
 }
 
