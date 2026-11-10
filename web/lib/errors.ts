@@ -9,6 +9,7 @@ const RULES: [RegExp, string][] = [
   [/preimage does not match/i, "That doesn't match what was recorded, so it can't be proven."],
   [/reveal an order after it closes/i, "You can publish proof after the stop has finished."],
   [/wallets are still loading/i, "Your wallet is still loading. Try again in a second."],
+  [/must deposit/i, "Your trading wallet is empty. Add some USDC to it first."],
   [/does not exist|User or API Wallet/i, "Hyperliquid doesn't know this wallet yet. Add funds to it first."],
   [/insufficient|not enough margin/i, "There isn't enough money in your trading wallet for that."],
   [/fetch|network|Failed to fetch|timeout/i, "We couldn't reach the network. Check your connection and try again."],

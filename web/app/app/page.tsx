@@ -29,7 +29,6 @@ export default function AppPage() {
   const agent = useAgentApproved();
 
   const [backedUp, setBackedUp] = useState(false);
-  const [fundSkipped, setFundSkipped] = useState(false);
   const [backstopOn, setBackstopOn] = useState(true);
 
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function AppPage() {
   }, [t.address]);
 
   const positions = ch.data?.assetPositions.map((p) => p.position).filter((p) => p.szi !== "0" && p.szi !== "0.0") ?? [];
-  const funded = fundSkipped || positions.length > 0 || Number(ch.data?.marginSummary.accountValue ?? 0) > 0;
+  const funded = positions.length > 0 || Number(ch.data?.marginSummary.accountValue ?? 0) > 0;
 
   const s1 = !!near.accountId;
   const s2 = t.status === "unlocked" && backedUp;
@@ -90,7 +89,7 @@ export default function AppPage() {
             />
           </Step>
           <Step n={3} title="Add funds" done={s3} open={open === 3} summary={ch.data && usd(ch.data.marginSummary.accountValue)}>
-            <FundStep onSkip={() => setFundSkipped(true)} />
+            <FundStep />
           </Step>
           <Step n={4} title="Turn on protection" done={s4} open={open === 4} summary={agent.approved ? "on" : undefined}>
             <ApproveStep />

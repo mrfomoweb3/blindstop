@@ -34,7 +34,12 @@ export function ApproveStep() {
       agents.reload();
     } catch (e) {
       console.error(e);
-      setErr("Hyperliquid didn\u2019t accept that. Make sure the wallet has funds, then try again.");
+      const m = e instanceof Error ? e.message : String(e);
+      setErr(
+        /must deposit/i.test(m)
+          ? "Your trading wallet is still empty. Add test USDC in step 3 first. Hyperliquid won't accept anything from an empty wallet."
+          : "Hyperliquid didn\u2019t accept that. Please try again in a moment.",
+      );
     } finally {
       setBusy(false);
     }
