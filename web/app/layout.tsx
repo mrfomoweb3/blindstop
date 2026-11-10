@@ -35,7 +35,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <head>
         <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
-      <body className="min-h-dvh flex flex-col">
+      {/* Browser extensions (Grammarly, password managers) add attributes to <body> before React loads. */}
+      <body className="min-h-dvh flex flex-col" suppressHydrationWarning>
         <Providers>
           <Nav />
           <main className="flex-1">{children}</main>
