@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Blindstop — the plain-English guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  @page { size: A4; margin: 0; }
+  :root {
+    --bg: #090a09; --panel: #111211; --panel-2: #161816; --sunken: #0c0d0c;
+    --fg: #f1f2ee; --soft: #b9bcb4; --muted: #858980; --faint: #50544c;
+    --line: #1e201d; --line-strong: #2b2e29; --accent: #c6f432; --ink: #0a0b08;
+    --good: #7fdc6a; --bad: #ff6b5a; --warn: #f0b545;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: "Geist", ui-sans-serif, system-ui, sans-serif; font-size: 10.5pt; line-height: 1.55; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 16mm 16mm 22mm; position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
+  .page:last-child { page-break-after: auto; }
+  .foot { position: absolute; left: 16mm; right: 16mm; bottom: 9mm; display: flex; justify-content: space-between; font-size: 8pt; color: var(--faint); }
+  .eyebrow { font-size: 8.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  h1 { font-weight: 300; letter-spacing: -.035em; color: var(--muted); font-size: 40pt; line-height: 1.04; }
+  h2 { font-weight: 300; letter-spacing: -.03em; color: var(--muted); font-size: 24pt; line-height: 1.1; margin-bottom: 4mm; }
+  h1 b, h2 b { font-weight: 400; color: var(--fg); }
+  h3 { font-size: 11.5pt; font-weight: 500; margin-bottom: 1.5mm; }
+  p { color: var(--soft); }
+  p + p { margin-top: 2.5mm; }
+  strong { color: var(--fg); font-weight: 500; }
+  .lead { font-size: 12pt; color: var(--soft); max-width: 150mm; }
+  .card { background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.008)), var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 5mm 5.5mm; }
+  .glow { box-shadow: 0 0 0 1px rgba(198,244,50,.35), 0 10px 40px -12px rgba(198,244,50,.35); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; }
+  .num { display: inline-grid; place-items: center; width: 8mm; height: 8mm; border-radius: 99px; border: 1px solid var(--line-strong); font-size: 9.5pt; margin-bottom: 3mm; }
+  .num.on { background: var(--accent); color: var(--ink); border-color: var(--accent); font-weight: 600; }
+  .small { font-size: 9pt; color: var(--muted); }
+  ul.check { list-style: none; display: grid; gap: 2mm; }
+  ul.check li { position: relative; padding-left: 6mm; color: var(--soft); }
+  ul.check li::before { content: "✓"; position: absolute; left: 0; top: 0; width: 4mm; height: 4mm; border-radius: 99px; border: 1px solid rgba(198,244,50,.55); color: var(--accent); font-size: 7pt; display: grid; place-items: center; margin-top: .9mm; }
+  ul.dot { list-style: none; display: grid; gap: 1.6mm; }
+  ul.dot li { position: relative; padding-left: 4.5mm; color: var(--soft); }
+  ul.dot li::before { content: ""; position: absolute; left: 0; top: 2.3mm; width: 1.6mm; height: 1.6mm; border-radius: 99px; background: var(--faint); }
+  .pill { display: inline-flex; align-items: center; gap: 1.5mm; height: 5.5mm; padding: 0 2.5mm; border-radius: 99px; border: 1px solid var(--line-strong); font-size: 8pt; color: var(--muted); white-space: nowrap; }
+  .pill.good { color: var(--good); border-color: rgba(127,220,106,.4); }
+  .pill.warn { color: var(--warn); border-color: rgba(240,181,69,.4); }
+  .pill.lime { color: var(--accent); border-color: rgba(198,244,50,.45); }
+  .shot { width: 100%; border-radius: 12px; border: 1px solid var(--line-strong); display: block; }
+  .tweet { background: var(--sunken); border: 1px solid var(--line); border-radius: 12px; padding: 4mm 4.5mm; white-space: pre-wrap; color: var(--fg); font-size: 9.8pt; line-height: 1.5; }
+  .tweet .meta { display: flex; justify-content: space-between; margin-top: 2.5mm; font-size: 7.8pt; color: var(--faint); white-space: normal; }
+  table { width: 100%; border-collapse: collapse; }
+  td, th { text-align: left; vertical-align: top; padding: 2.2mm 3mm; border-top: 1px solid var(--line); font-size: 9.2pt; color: var(--soft); }
+  th { font-weight: 500; color: var(--muted); font-size: 7.8pt; letter-spacing: .1em; text-transform: uppercase; border-top: 0; }
+  td.say { color: var(--fg); }
+  td.not { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(255,107,90,.6); }
+  .horizon { position: absolute; left: 0; right: 0; height: 60mm; background: radial-gradient(30% 45% at 50% 50%, rgba(198,244,50,.55), transparent 70%), radial-gradient(55% 60% at 50% 50%, rgba(198,244,50,.18), transparent 75%); filter: blur(10px); }
+  .rule { height: 1px; background: linear-gradient(90deg, transparent, var(--accent) 50%, transparent); opacity: .8; }
+  .logo { display: inline-flex; align-items: center; gap: 2.5mm; font-weight: 600; font-size: 13pt; letter-spacing: -.02em; }
+  .logo i { display: grid; place-items: center; width: 8mm; height: 8mm; border-radius: 2.2mm; background: var(--accent); }
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; font-size: 9pt; }
+  .k { color: var(--muted); font-size: 7.8pt; letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- 1 · cover -->
+<section class="page">
+  <div class="logo"><i><svg viewBox="0 0 32 32" width="20" height="20"><path d="M3 19h8M21 19h8" stroke="#0a0b08" stroke-width="3" stroke-linecap="round"/><rect x="13" y="8" width="6" height="16" rx="1.6" fill="#0a0b08"/></svg></i>Blindstop</div>
+  <div style="margin-top: 26mm;">
+    <div class="eyebrow">The plain-English guide · for writing the demo tweet</div>
+    <h1 style="margin-top: 6mm;">Your <b>stop-loss</b>, sealed.<br /><b>Invisible</b> until it fires.</h1>
+    <p class="lead" style="margin-top: 7mm;">Blindstop gives traders on Hyperliquid stop-losses that nobody else can see. This guide explains what we built in everyday words, what&rsquo;s proven so far, and gives you ready-to-post tweets and a script for the demo video. No technical background needed.</p>
+  </div>
+  <div style="position: relative; margin-top: 16mm;">
+    <div class="horizon" style="top: -32mm;"></div>
+    <div class="rule" style="position: relative;"></div>
+    <img class="shot" style="position: relative; margin-top: 8mm;" src="shot-hero.png" alt="Blindstop app preview" />
+  </div>
+  <div class="foot"><span>Blindstop · built at NEAR HACKATHON</span><span>github.com/mrfomoweb3/blindstop</span></div>
+</section>
+
+<!-- 2 · the problem -->
+<section class="page">
+  <div class="eyebrow">01 · The problem</div>
+  <h2 style="margin-top: 4mm;">On Hyperliquid, <b>everyone can see your stop</b></h2>
+  <p class="lead">A stop-loss is an order that says &ldquo;if the price drops to X, sell, so I don&rsquo;t lose more.&rdquo; Almost every trader uses one.</p>
+
+  <div class="grid2" style="margin-top: 7mm;">
+    <div class="card">
+      <h3>What&rsquo;s going wrong</h3>
+      <ul class="dot">
+        <li>Hyperliquid is a popular crypto trading platform where <strong>every order is public</strong>, stop-losses included.</li>
+        <li>Free tools show where lots of stop-losses are <strong>bunched up</strong> at the same price.</li>
+        <li>Traders with deep pockets can <strong>push the price into that zone on purpose</strong>, trigger everyone&rsquo;s stops, then let the price bounce back.</li>
+        <li>This is called <strong>&ldquo;stop hunting&rdquo;</strong>. People have organized it openly, and smaller traders say they get hunted even with tiny positions.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Why nothing fixed it yet</h3>
+      <ul class="dot">
+        <li>Some other exchanges offer hidden orders, but only <strong>on their own platform</strong>, not on Hyperliquid.</li>
+        <li>Privacy tools like Gloam can hide <strong>who owns</strong> a wallet. They don&rsquo;t hide <strong>where its stops are</strong>.</li>
+        <li>So on Hyperliquid, until now, there was <strong>no way to keep your stop-loss price private</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <img class="shot" style="margin-top: 7mm;" src="shot-hunt.png" alt="A normal stop everyone can see, next to a hidden one" />
+  <p class="small" style="margin-top: 2.5mm;">From the Blindstop website: the same price chart twice. On the left, your stop is a line anyone can aim at. On the right, there&rsquo;s nothing to aim at.</p>
+
+  <div class="card glow" style="margin-top: auto;">
+    <div class="k">The one-line pitch</div>
+    <p style="font-size: 15pt; font-weight: 300; letter-spacing: -.02em; margin-top: 1.5mm; color: var(--muted);">Gloam hides <strong style="font-weight: 400;">who you are</strong>. Blindstop hides <strong style="font-weight: 400;">where your stops are</strong>.</p>
+  </div>
+  <div class="foot"><span>Blindstop · plain-English guide</span><span>2</span></div>
+</section>
+
+<!-- 3 · how it works -->
+<section class="page">
+  <div class="eyebrow">02 · How it works</div>
+  <h2 style="margin-top: 4mm;">Set it once, <b>sleep easy</b></h2>
+  <p class="lead">Four steps. The trader only does the first one; Blindstop handles the rest.</p>
+
+  <div class="grid4" style="margin-top: 7mm;">
+    <div class="card"><span class="num">1</span><h3>You set a stop</h3><p class="small">You pick your price. It&rsquo;s <strong>locked on your own device</strong> before it goes anywhere, like sealing a letter.</p></div>
+    <div class="card glow"><span class="num on">2</span><h3>It&rsquo;s watched in secret</h3><p class="small">A <strong>sealed computer</strong> that not even we can look inside checks the price every few seconds.</p></div>
+    <div class="card"><span class="num">3</span><h3>Your trade is closed</h3><p class="small">When the price reaches your level, it <strong>closes your position</strong> straight away and records what happened.</p></div>
+    <div class="card"><span class="num">4</span><h3>You can prove it</h3><p class="small">Afterwards, you can <strong>publish proof</strong> of exactly where your stop was, and when you set it.</p></div>
+  </div>
+
+  <div class="grid2" style="margin-top: 6mm;">
+    <div class="card">
+      <h3 style="color: var(--accent);">Hidden from everyone</h3>
+      <ul class="check" style="margin-top: 2.5mm;">
+        <li>Your stop-loss and take-profit prices</li>
+        <li>How much of your position they&rsquo;ll close</li>
+        <li>Which coin they&rsquo;re for</li>
+        <li>Which wallet they protect</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Still visible, like on any exchange</h3>
+      <ul class="dot" style="margin-top: 2.5mm;">
+        <li>Your open position and its liquidation price</li>
+        <li>The moment a stop closes your trade</li>
+        <li>That your account uses Blindstop, and when you set stops</li>
+      </ul>
+      <p class="small" style="margin-top: 3mm;">Be upfront about this list. Honesty is part of the pitch.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 6mm;">
+    <h3>The easiest analogy</h3>
+    <p>A normal stop-loss is like taping a note to your front door that says <strong>&ldquo;I&rsquo;ll sell everything if the price hits $94,800.&rdquo;</strong> Anyone walking past can read it. Blindstop puts that note in a <strong>sealed envelope</strong>, hands it to a <strong>trusted guard</strong> who can&rsquo;t be bribed or peeked at, and the guard acts the moment the price gets there.</p>
+  </div>
+
+  <div class="card" style="margin-top: 6mm;">
+    <h3>Why it&rsquo;s safe to use</h3>
+    <div class="grid3" style="margin-top: 2mm;">
+      <div><div class="k">Your money</div><p class="small" style="margin-top: 1mm;">Blindstop can <strong>only close trades</strong>. It can never withdraw, send or move your funds.</p></div>
+      <div><div class="k">Fake prices</div><p class="small" style="margin-top: 1mm;">It reads the price <strong>straight from Hyperliquid</strong>. Nobody can feed it a fake one.</p></div>
+      <div><div class="k">Safety net</div><p class="small" style="margin-top: 1mm;">Optional <strong>backup stop</strong> near liquidation, in case Blindstop is ever offline.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Blindstop · plain-English guide</span><span>3</span></div>
+</section>
+
+<!-- 4 · what's real -->
+<section class="page">
+  <div class="eyebrow">03 · What&rsquo;s real today</div>
+  <h2 style="margin-top: 4mm;">What you can say <b>with confidence</b></h2>
+  <p class="lead">Every line below is backed by something anyone can check. Stick to these and nobody can poke holes in the post.</p>
+
+  <table style="margin-top: 4mm;">
+    <tr><th style="width: 58%;">Claim</th><th>Status</th></tr>
+    <tr><td><strong>Live on test networks</strong> (NEAR testnet + Hyperliquid testnet). Test money only.</td><td><span class="pill good">● Done</span></td></tr>
+    <tr><td>Stops are <strong>locked in the browser</strong> and opened only inside the secure sealed computer.</td><td><span class="pill good">● Done, tested live</span></td></tr>
+    <tr><td>The sealed computer <strong>checks every 3 seconds</strong> and signs every check on the NEAR blockchain.</td><td><span class="pill good">● Done, visible on the Status page</span></td></tr>
+    <tr><td><strong>9 out of 9 break-in attempts blocked</strong>: fake reports, replays, stealing someone else&rsquo;s order, faking prices, and more.</td><td><span class="pill good">● Done, log in the repo</span></td></tr>
+    <tr><td>The order-signing code matches <strong>Hyperliquid&rsquo;s official software, byte for byte</strong>.</td><td><span class="pill good">● Done, automated tests</span></td></tr>
+    <tr><td>Anyone can <strong>check a stop was genuine</strong> after it finished (the &ldquo;Check a stop&rdquo; page).</td><td><span class="pill good">● Done</span></td></tr>
+    <tr><td><strong>Open source</strong>. All code is public on GitHub.</td><td><span class="pill good">● Done</span></td></tr>
+    <tr><td>A hidden stop <strong>closing a real position on Hyperliquid</strong>, end to end, on camera.</td><td><span class="pill warn">● Next: needs test funds, then record</span></td></tr>
+    <tr><td>Private funding through Gloam.</td><td><span class="pill">○ Manual steps for now</span></td></tr>
+  </table>
+
+  <div class="card glow" style="margin-top: 6mm;">
+    <h3>One rule before you post</h3>
+    <p>Post the demo video <strong>after</strong> the live run (the orange row) is recorded. Until then, say &ldquo;working on testnet&rdquo; and show the setup, the hidden stop, the empty public order list and the Status page. Don&rsquo;t say it has closed a real trade until the video shows it.</p>
+  </div>
+
+  <div class="grid2" style="margin-top: 5mm; align-items: start;">
+    <img class="shot" src="shot-status.png" alt="Status page: protection is on" />
+    <img class="shot" src="shot-verify.png" alt="Check a stop: Genuine" />
+  </div>
+  <p class="small" style="margin-top: 2.5mm;">Left: the Status page shows live that protection is on. Right: &ldquo;Check a stop&rdquo; confirms a past stop is genuine.</p>
+  <div class="foot"><span>Blindstop · plain-English guide</span><span>4</span></div>
+</section>
+
+<!-- 5 · words -->
+<section class="page">
+  <div class="eyebrow">04 · Words that work</div>
+  <h2 style="margin-top: 4mm;">Say it like <b>a person</b></h2>
+  <p class="lead">The audience is traders, not engineers. Swap jargon for what it means to them.</p>
+
+  <div class="card" style="margin-top: 6mm; padding: 2mm 2mm;">
+    <table>
+      <tr><th style="width: 44%;">Say this</th><th>Instead of this</th></tr>
+      <tr><td class="say">hidden stop-loss</td><td class="not">sealed / encrypted order</td></tr>
+      <tr><td class="say">a sealed computer nobody can look inside</td><td class="not">TEE, Intel TDX enclave, OutLayer worker</td></tr>
+      <tr><td class="say">locked on your device before it leaves</td><td class="not">ECIES, X25519, ChaCha20-Poly1305</td></tr>
+      <tr><td class="say">recorded on the NEAR blockchain</td><td class="not">commitment hash on a NEAR smart contract</td></tr>
+      <tr><td class="say">it can close your trades, never withdraw</td><td class="not">approved Hyperliquid agent wallet</td></tr>
+      <tr><td class="say">checks the price every 3 seconds</td><td class="not">keeper ticks every 3000 ms</td></tr>
+      <tr><td class="say">publish proof / check a stop</td><td class="not">reveal preimage, verify commitment</td></tr>
+      <tr><td class="say">stop hunting</td><td class="not">liquidity cluster exploitation</td></tr>
+    </table>
+  </div>
+
+  <div class="grid2" style="margin-top: 6mm;">
+    <div class="card">
+      <h3>If someone asks&hellip;</h3>
+      <p class="small"><strong>&ldquo;Can you take my money?&rdquo;</strong> No. It can only close positions. Hyperliquid itself blocks that kind of permission from withdrawing.</p>
+      <p class="small"><strong>&ldquo;Who can see my price?&rdquo;</strong> Only you and the sealed computer. Not other traders, not Hyperliquid&rsquo;s public list, not us.</p>
+      <p class="small"><strong>&ldquo;What if it goes down?&rdquo;</strong> Stops pause until it&rsquo;s back, and the Status page shows it. Turn on the safety net for a backup stop near liquidation.</p>
+    </div>
+    <div class="card">
+      <h3>If someone asks&hellip;</h3>
+      <p class="small"><strong>&ldquo;Is it as fast as a normal stop?&rdquo;</strong> Nearly. It triggers within a few seconds. In a very sudden move the fill can be a bit worse.</p>
+      <p class="small"><strong>&ldquo;Why NEAR?&rdquo;</strong> NEAR&rsquo;s OutLayer runs the sealed computer, and NEAR keeps the tamper-proof record of every stop.</p>
+      <p class="small"><strong>&ldquo;Is it real money?&rdquo;</strong> Not yet: it&rsquo;s running on test networks for the hackathon.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 6mm;">
+    <div class="k">Quick facts to keep handy</div>
+    <div class="grid3" style="margin-top: 2.5mm;">
+      <div><p class="small">Name</p><p><strong>Blindstop</strong></p></div>
+      <div><p class="small">Works with</p><p><strong>Hyperliquid</strong></p></div>
+      <div><p class="small">Built on</p><p><strong>NEAR + OutLayer</strong></p></div>
+      <div><p class="small">Event</p><p><strong>NEAR HACKATHON</strong></p></div>
+      <div><p class="small">Tracks</p><p><strong>Privacy · DeFi · Security</strong></p></div>
+      <div><p class="small">Code</p><p class="mono" style="color: var(--fg);">github.com/mrfomoweb3/blindstop</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Blindstop · plain-English guide</span><span>5</span></div>
+</section>
+
+<!-- 6 · tweets -->
+<section class="page">
+  <div class="eyebrow">05 · Ready-to-post tweets</div>
+  <h2 style="margin-top: 4mm;">The <b>demo post</b></h2>
+  <div class="card" style="margin-top: 2mm;">
+    <div class="k">The hackathon requires the post to</div>
+    <ul class="check" style="margin-top: 2.5mm; grid-template-columns: 1fr 1fr; column-gap: 6mm;">
+      <li>say it was built at <strong>NEAR HACKATHON</strong></li>
+      <li>tag <strong>@NEARProtocol</strong></li>
+      <li>use <strong>#NEARHackathon</strong></li>
+      <li>attach the <strong>demo video</strong></li>
+    </ul>
+  </div>
+
+  <div class="grid2" style="margin-top: 5mm;">
+    <div>
+      <div class="k" style="margin-bottom: 2mm;">Option A · punchy</div>
+      <div class="tweet">Every stop-loss on Hyperliquid is public. Whales can see where they&rsquo;re bunched up and push the price there on purpose.
+
+So we built Blindstop: stop-losses nobody can see until they fire.
+
+Built at NEAR HACKATHON with @NEARProtocol 👇
+#NEARHackathon<div class="meta"><span>attach demo video</span><span>248 / 280</span></div></div>
+    </div>
+    <div>
+      <div class="k" style="margin-bottom: 2mm;">Option B · story</div>
+      <div class="tweet">Ever been stopped out by a wick that reversed a second later?
+
+That&rsquo;s often not bad luck. On Hyperliquid your stop-loss is public, and it can be hunted.
+
+Blindstop hides it in a sealed computer that closes your trade when the price gets there.
+
+#NEARHackathon @NEARProtocol<div class="meta"><span>attach demo video</span><span>273 / 280</span></div></div>
+    </div>
+  </div>
+  <div style="margin-top: 4mm;">
+    <div class="k" style="margin-bottom: 2mm;">Option C · one-liner</div>
+    <div class="tweet">Gloam hides who you are. Blindstop hides where your stops are.
+
+Private stop-losses for Hyperliquid, built at NEAR HACKATHON. Demo 👇 @NEARProtocol #NEARHackathon<div class="meta"><span>attach demo video</span><span>162 / 280</span></div></div>
+  </div>
+  <div class="card" style="margin-top: 5mm;">
+    <h3>Posting tips</h3>
+    <ul class="dot">
+      <li>Lead with the <strong>pain</strong> (getting stopped out), not the tech.</li>
+      <li>Put the video in the <strong>first</strong> tweet. That&rsquo;s what judges and the timeline see.</li>
+      <li>Reply to your own post with the GitHub link, so the main tweet stays clean.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Blindstop · plain-English guide</span><span>6</span></div>
+</section>
+
+<!-- 7 · thread -->
+<section class="page">
+  <div class="eyebrow">06 · The thread</div>
+  <h2 style="margin-top: 4mm;">Six tweets that <b>tell the whole story</b></h2>
+  <p class="lead">Use this after the first tweet if you want more reach. Each one stands on its own.</p>
+  <div class="grid2" style="margin-top: 6mm; row-gap: 4mm;">
+    <div class="tweet">1/ Every stop-loss on Hyperliquid is public. Anyone can see where they sit, and big traders push the price there on purpose to trigger them.
+
+We built Blindstop at NEAR HACKATHON to fix that. 🧵 @NEARProtocol #NEARHackathon<div class="meta"><span>+ demo video</span><span>223 / 280</span></div></div>
+    <div class="tweet">2/ With Blindstop, you set your stop-loss like normal, but it&rsquo;s locked on your device before it goes anywhere.
+
+It never appears in Hyperliquid&rsquo;s public order list. There&rsquo;s nothing to hunt.<div class="meta"><span>+ screenshot: empty public list</span><span>189 / 280</span></div></div>
+    <div class="tweet">3/ A sealed computer runs on NEAR&rsquo;s OutLayer. Not even we can look inside. It checks the price every 3 seconds and closes your trade the moment your level is hit.<div class="meta"><span>+ screenshot: Status page</span><span>162 / 280</span></div></div>
+    <div class="tweet">4/ It can close your trades. It can never withdraw your money. Hyperliquid itself blocks that permission from moving funds.
+
+You can also add a backup stop near liquidation, just in case.<div class="meta"><span>text only</span><span>187 / 280</span></div></div>
+    <div class="tweet">5/ After a stop finishes, you can publish proof of exactly where it was and when you set it. Recorded on NEAR, so it can&rsquo;t be changed later.
+
+We threw 9 break-in attempts at it. All 9 blocked.<div class="meta"><span>+ screenshot: &ldquo;Genuine&rdquo;</span><span>192 / 280</span></div></div>
+    <div class="tweet">6/ Gloam hides who you are. Blindstop hides where your stops are.
+
+Live on testnet. Open source:
+github.com/mrfomoweb3/blindstop<div class="meta"><span>text only</span><span>120 / 280</span></div></div>
+  </div>
+  <div class="foot"><span>Blindstop · plain-English guide</span><span>7</span></div>
+</section>
+
+<!-- 8 · video -->
+<section class="page">
+  <div class="eyebrow">07 · The demo video</div>
+  <h2 style="margin-top: 4mm;">Two minutes, <b>six shots</b></h2>
+  <p class="lead">Screen-record the app and talk over it. Keep it calm and simple: show, then say what it means.</p>
+  <div class="card" style="margin-top: 6mm; padding: 2mm 2mm;">
+    <table>
+      <tr><th style="width: 13%;">Time</th><th style="width: 40%;">On screen</th><th>Say</th></tr>
+      <tr><td class="mono">0:00</td><td>A stop-loss tracker / chart with stops bunched at one price</td><td>&ldquo;On Hyperliquid every stop-loss is public. People can see where they cluster, and hunt them.&rdquo;</td></tr>
+      <tr><td class="mono">0:20</td><td>Blindstop &ldquo;My positions&rdquo;: sign in, create trading wallet, turn on protection</td><td>&ldquo;Blindstop sets you up with a separate trading wallet. It can close your trades, never withdraw.&rdquo;</td></tr>
+      <tr><td class="mono">0:40</td><td>Type a take-profit just above the price, click <strong>Hide my stop</strong>. Show &ldquo;Orders anyone can see: 0&rdquo;</td><td>&ldquo;I set my stop. It&rsquo;s locked on my device. Hyperliquid&rsquo;s public list shows nothing.&rdquo;</td></tr>
+      <tr><td class="mono">1:05</td><td>Price reaches the level; position closes; History shows <strong>Triggered</strong> with the fill price</td><td>&ldquo;The price got there, and the sealed computer closed my trade in seconds.&rdquo;</td></tr>
+      <tr><td class="mono">1:35</td><td>History, then <strong>Publish proof</strong>, then Check a stop: <strong>Genuine</strong></td><td>&ldquo;And anyone can check my stop was set before the move.&rdquo;</td></tr>
+      <tr><td class="mono">1:50</td><td>Home page headline</td><td>&ldquo;Gloam hides who you are. Blindstop hides where your stops are.&rdquo;</td></tr>
+    </table>
+  </div>
+  <div class="grid2" style="margin-top: 6mm;">
+    <div class="card">
+      <h3>Before you hit record</h3>
+      <ul class="check">
+        <li>Status page shows <strong>Protection is on</strong> (green)</li>
+        <li>The trading wallet has test money and an open trade</li>
+        <li>Safety net <strong>off</strong> for the recording, so the public list really shows 0</li>
+        <li>Browser zoom ~110%, dark mode, notifications off</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Keep it honest</h3>
+      <ul class="dot">
+        <li>Say &ldquo;on testnet&rdquo; once, early.</li>
+        <li>Only show the trade closing if it really closed in the recording.</li>
+        <li>Don&rsquo;t promise speeds or features that aren&rsquo;t in the video.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card glow" style="margin-top: auto;">
+    <div class="k">Links</div>
+    <p style="margin-top: 1.5mm;">Code: <span class="mono" style="color: var(--fg);">github.com/mrfomoweb3/blindstop</span> &nbsp;·&nbsp; NEAR contract: <span class="mono" style="color: var(--fg);">blindstop.testnet</span></p>
+  </div>
+  <div class="foot"><span>Blindstop · plain-English guide</span><span>8</span></div>
+</section>
+
+</body>
+</html>
