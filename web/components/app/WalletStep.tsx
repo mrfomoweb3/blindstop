@@ -39,7 +39,7 @@ export function WalletStep({ onBackedUp }: { onBackedUp: () => void }) {
   if (t.status === "locked") {
     return (
       <form className="grid gap-3 max-w-md pt-3" onSubmit={(e) => (e.preventDefault(), run(() => t.unlock(pass)))}>
-        <p className="text-sm text-fg/75">
+        <p className="text-sm text-soft">
           Trading wallet <span className="font-mono">{t.address}</span> is stored in this browser, encrypted. Unlock it to continue.
         </p>
         <label>
@@ -57,7 +57,7 @@ export function WalletStep({ onBackedUp }: { onBackedUp: () => void }) {
   if (t.status === "unlocked") {
     return (
       <div className="grid gap-3 pt-3 max-w-xl">
-        <p className="text-sm text-fg/75">
+        <p className="text-sm text-soft">
           Your trading wallet is <span className="font-mono break-all">{t.address}</span>. Its key exists only in this browser,
           encrypted with your passphrase. Download the encrypted backup before you continue. Without it, clearing your browser loses the wallet.
         </p>
@@ -72,13 +72,13 @@ export function WalletStep({ onBackedUp }: { onBackedUp: () => void }) {
   const mismatch = pass2.length > 0 && pass !== pass2;
   return (
     <div className="grid gap-4 pt-3 max-w-xl">
-      <p className="text-sm text-fg/75">
+      <p className="text-sm text-soft">
         Use a <strong>fresh</strong> wallet that holds nothing else. The Blindstop agent you approve next can close its positions, so keep
         your main wallet out of it. The key is generated here and never leaves this browser.
       </p>
       <div className="flex gap-1 text-xs">
         {(["create", "import"] as const).map((m) => (
-          <button key={m} onClick={() => setMode(m)} className={`px-2.5 h-7 rounded-[5px] ${mode === m ? "bg-sunken text-fg" : "text-muted"}`}>
+          <button key={m} onClick={() => setMode(m)} className={`px-2.5 h-7 rounded-full ${mode === m ? "bg-sunken text-fg" : "text-muted"}`}>
             {m === "create" ? "Create new" : "Import key"}
           </button>
         ))}

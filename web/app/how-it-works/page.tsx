@@ -30,7 +30,7 @@ export default function HowItWorks() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 grid grid-cols-1 gap-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">How it works</h1>
+        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">How it works</h1>
         <p className="text-sm text-muted mt-1 max-w-2xl">What Blindstop hides, what it cannot hide, and what you have to trust. Stated plainly.</p>
       </div>
 
@@ -52,7 +52,7 @@ keeper ◀── ed25519-signed report ──  record_fire ──▶ NEAR verifi
       <Table title="What you trust" rows={TRUST} />
 
       <Panel title="Safety properties you can test">
-        <ul className="text-sm leading-relaxed text-fg/80 list-disc pl-5 space-y-1.5">
+        <ul className="text-sm leading-relaxed text-soft list-disc pl-5 space-y-1.5">
           <li>A report with a forged signature, a replayed report, or a valid report for another order is refused by the contract.</li>
           <li>The enclave reads nothing that matters from its input: fake prices or orders sent by a keeper are ignored.</li>
           <li>If the two NEAR RPCs disagree about the active orders, the enclave refuses to act at all.</li>
@@ -70,7 +70,7 @@ keeper ◀── ed25519-signed report ──  record_fire ──▶ NEAR verifi
 
 function Table({ title, rows, tone }: { title: string; rows: string[][]; tone?: "good" | "bad" }) {
   return (
-    <section className="border border-line rounded-[8px] bg-panel">
+    <section className="card">
       <header className="px-4 sm:px-5 h-11 flex items-center border-b border-line">
         <h2 className={`text-[13px] font-medium ${tone === "good" ? "text-good" : tone === "bad" ? "text-bad" : ""}`}>{title}</h2>
       </header>
@@ -78,7 +78,7 @@ function Table({ title, rows, tone }: { title: string; rows: string[][]; tone?: 
         {rows.map(([k, v]) => (
           <div key={k} className="px-4 sm:px-5 py-3 grid gap-0.5">
             <dt className="text-sm font-medium">{k}</dt>
-            <dd className="text-[13px] text-fg/70 leading-relaxed">{v}</dd>
+            <dd className="text-[13px] text-soft leading-relaxed">{v}</dd>
           </div>
         ))}
       </dl>

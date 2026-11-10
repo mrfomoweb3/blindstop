@@ -38,7 +38,7 @@ export function PositionCard({
   const publicTriggers = openOrders.filter((o) => o.coin === position.coin && o.isTrigger);
 
   return (
-    <article className="border border-line rounded-[8px] bg-panel">
+    <article className="card">
       <header className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 sm:px-5 py-3 border-b border-line">
         <h3 className="font-semibold tracking-tight">{position.coin}-PERP</h3>
         <Pill tone={isLong ? "good" : "bad"}>
@@ -70,7 +70,7 @@ export function PositionCard({
           <ul className="grid gap-1.5">
             {active.map((l) => (
               <li key={l.commitment} className="flex items-center gap-3 font-mono text-[13px] tabular">
-                <span className={cx("w-8 text-xs", l.kind === "stop_loss" ? "text-accent" : "text-fg/70")}>{l.kind === "stop_loss" ? "SL" : "TP"}</span>
+                <span className={cx("w-8 text-xs", l.kind === "stop_loss" ? "text-accent-text" : "text-soft")}>{l.kind === "stop_loss" ? "SL" : "TP"}</span>
                 <span className="w-28">{px(l.triggerPx)}</span>
                 <span className="w-20 text-muted">{distancePct(mark, l.triggerPx)}</span>
                 <span className="text-muted text-xs truncate">{l.size === "ALL" ? "full position" : l.size}</span>

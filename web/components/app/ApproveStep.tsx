@@ -41,7 +41,7 @@ export function ApproveStep() {
 
   return (
     <div className="grid gap-4 pt-3 max-w-2xl">
-      <p className="text-sm text-fg/75">
+      <p className="text-sm text-soft">
         Approve the enclave&rsquo;s agent for your trading wallet. Its address comes from the Blindstop contract, which pins the enclave
         keys.
       </p>

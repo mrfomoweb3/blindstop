@@ -35,7 +35,7 @@ export function ExitPanel() {
   return (
     <Panel title="Exit" aside={`withdrawable ${usd(ch.data?.withdrawable)}`}>
       <div className="grid gap-3 max-w-xl">
-        <p className="text-sm text-fg/75">
+        <p className="text-sm text-soft">
           Withdraw from Hyperliquid back to this trading wallet on Arbitrum, signed by its own key (the watcher cannot do this). To make the
           exit private, deposit from there into <ExternalLink href="https://gloam.trade">Gloam</ExternalLink> with &ldquo;deposit from another
           chain&rdquo;; the wallet needs a little ETH on Arbitrum for that transaction.

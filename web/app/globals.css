@@ -1,70 +1,66 @@
 @import "tailwindcss";
 
-/* Monochrome, one accent. The accent marks the seal and nothing else. */
+/* Dark-first. One accent: lime, for the seal and the primary action. */
 :root {
-  --bg: #f4f3ef;
+  --bg: #090a09;
+  --panel: #111211;
+  --panel-2: #161816;
+  --sunken: #0c0d0c;
+  --fg: #f1f2ee;
+  --soft: #b9bcb4;
+  --muted: #858980;
+  --faint: #50544c;
+  --line: #1e201d;
+  --line-strong: #2b2e29;
+  --accent: #c6f432;
+  --accent-ink: #0a0b08;
+  --accent-text: #c6f432;
+  --good: #7fdc6a;
+  --warn: #f0b545;
+  --bad: #ff6b5a;
+  --glow: rgba(198, 244, 50, 0.32);
+  --card-hi: rgba(255, 255, 255, 0.035);
+  --card-lo: rgba(255, 255, 255, 0.008);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f2f3ee;
   --panel: #ffffff;
-  --sunken: #ebe9e3;
-  --fg: #121211;
-  --muted: #6c6b66;
-  --faint: #a3a19a;
-  --line: #dddbd3;
-  --line-strong: #c8c5bb;
-  --accent: #ff4f00;
-  --accent-ink: #ffffff;
-  --good: #1f7a3a;
+  --panel-2: #f7f8f3;
+  --sunken: #eceee7;
+  --fg: #0d0f0b;
+  --soft: #3b3f37;
+  --muted: #6a6e65;
+  --faint: #a2a69b;
+  --line: #e1e3db;
+  --line-strong: #cdd0c5;
+  --accent: #c6f432;
+  --accent-ink: #0a0b08;
+  --accent-text: #4f6b00;
+  --good: #23803c;
   --warn: #9a6400;
   --bad: #b42318;
+  --glow: rgba(150, 200, 20, 0.28);
+  --card-hi: rgba(0, 0, 0, 0.012);
+  --card-lo: rgba(0, 0, 0, 0);
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0c0c0d;
-    --panel: #131315;
-    --sunken: #0f0f10;
-    --fg: #ecebe7;
-    --muted: #8e8d87;
-    --faint: #5a5955;
-    --line: #232326;
-    --line-strong: #34343a;
-    --accent: #ff5a14;
-    --accent-ink: #0c0c0d;
-    --good: #46b464;
-    --warn: #d6a033;
-    --bad: #f0624f;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg: #0c0c0d;
-  --panel: #131315;
-  --sunken: #0f0f10;
-  --fg: #ecebe7;
-  --muted: #8e8d87;
-  --faint: #5a5955;
-  --line: #232326;
-  --line-strong: #34343a;
-  --accent: #ff5a14;
-  --accent-ink: #0c0c0d;
-  --good: #46b464;
-  --warn: #d6a033;
-  --bad: #f0624f;
-  color-scheme: dark;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
   --color-sunken: var(--sunken);
   --color-fg: var(--fg);
+  --color-soft: var(--soft);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
   --color-good: var(--good);
   --color-warn: var(--warn);
   --color-bad: var(--bad);
@@ -81,7 +77,6 @@ body {
 body {
   overflow-x: clip;
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -95,16 +90,71 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Focus that is visible in both themes. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-/* A hairline grid that reads as "ledger", not decoration. */
-.ledger {
-  background-image: linear-gradient(var(--line) 1px, transparent 1px);
-  background-size: 100% 28px;
+/* Cards: a faint top-lit gradient over the panel, hairline border. */
+.card {
+  background: linear-gradient(180deg, var(--card-hi), var(--card-lo)), var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+/* Two-tone light headline: muted words, bright emphasis. */
+.headline {
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  color: var(--muted);
+}
+.headline strong,
+.headline b {
+  font-weight: 400;
+  color: var(--fg);
+}
+
+/* The lime horizon under the hero. */
+.horizon {
+  position: relative;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.horizon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -150px;
+  width: min(900px, 130%);
+  height: 300px;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(22% 30% at 50% 50%, rgba(198, 244, 50, 0.75), transparent 70%),
+    radial-gradient(45% 50% at 50% 50%, rgba(198, 244, 50, 0.28), transparent 75%);
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: 0;
+}
+.horizon::after {
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent) 50%, transparent);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* Lime glow for highlighted cards and the primary button. */
+.lime-glow {
+  box-shadow: 0 0 0 1px rgba(198, 244, 50, 0.35), 0 10px 40px -12px var(--glow);
+}
+
+.dots {
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+  background-size: 18px 18px;
 }
 
 @keyframes pulse-dot {

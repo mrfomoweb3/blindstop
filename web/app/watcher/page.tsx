@@ -34,14 +34,14 @@ export default function WatcherPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 grid grid-cols-1 gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">The watcher</h1>
+        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">The watcher</h1>
         <p className="text-sm text-muted mt-1 max-w-2xl">
           An OutLayer project running in an Intel TDX enclave. It signs every report with a key the contract pins; this page reads
           everything from NEAR and the keeper, so you can check it without trusting this site.
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-4 gap-4 border border-line rounded-[8px] bg-panel p-4 sm:p-5">
+      <div className="grid sm:grid-cols-4 gap-4 card p-4 sm:p-5">
         <Stat label="Last heartbeat" value={<Pill tone={tone} dot>{t ? ago(t, now) : hb.error ? "unreachable" : "none yet"}</Pill>} sub="signed by the enclave, recorded on NEAR" />
         <Stat label="Active sealed orders" value={active.data ?? "…"} />
         <Stat label="Orders seen at last heartbeat" value={hb.data?.orders_seen ?? "—"} />
@@ -84,16 +84,16 @@ export default function WatcherPage() {
 
       <Panel title="Check it yourself">
         <div className="grid gap-3 text-sm">
-          <p className="text-fg/75">The keys above are what the contract trusts. Ask the contract directly:</p>
+          <p className="text-soft">The keys above are what the contract trusts. Ask the contract directly:</p>
           <Code>{`near contract call-function as-read-only ${CONTRACT} get_enclave_keys json-args {} network-config ${NEAR_NETWORK} now`}</Code>
-          <p className="text-fg/75">
+          <p className="text-soft">
             Every enclave run has a TDX attestation that names the exact wasm sha256 it ran. Fetch one by call id (the keeper exposes the
             last one) and compare the hash with the release build:
           </p>
           <Code>{`curl ${OUTLAYER_API}/attestations/by-call/<call_id>
 cd enclave/room && BLINDSTOP_CONTRACT=${CONTRACT} cargo build --release --target wasm32-wasip2
 shasum -a 256 target/wasm32-wasip2/release/blindstop-room.wasm`}</Code>
-          <p className="text-fg/75">
+          <p className="text-soft">
             The enclave answers <Mono>{`{"op":"pubkeys"}`}</Mono> with the same three keys on every run (see <Mono>docs/spikes.md</Mono>, S3).
           </p>
         </div>

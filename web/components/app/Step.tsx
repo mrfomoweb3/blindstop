@@ -17,12 +17,12 @@ export function Step({
   children: ReactNode;
 }) {
   return (
-    <li className={cx("border border-line rounded-[8px] bg-panel", open && "border-line-strong")}>
-      <div className="flex items-center gap-3 px-4 sm:px-5 h-12">
+    <li className={cx("card", open && "lime-glow")}>
+      <div className="flex items-center gap-3 px-4 sm:px-5 h-14">
         <span
           className={cx(
             "grid place-items-center size-6 rounded-full text-[11px] font-mono shrink-0",
-            done ? "bg-fg text-bg" : open ? "border border-fg" : "border border-line-strong text-muted",
+            done ? "bg-accent text-accent-ink" : open ? "border border-accent text-accent-text" : "border border-line-strong text-muted",
           )}
           aria-hidden
         >

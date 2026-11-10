@@ -86,7 +86,7 @@ function VerifyInner() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 grid grid-cols-1 gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Verify a sealed order</h1>
+        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">Verify a sealed order</h1>
         <p className="text-sm text-muted mt-1 max-w-2xl">
           NEAR stored a commitment, <Mono>sha256(&quot;blindstop:v1:order&quot; ‖ order)</Mono>, the moment the order was placed. Hash the
           preimage here, in your browser, and compare. A match proves the level existed, exactly, before the price moved.

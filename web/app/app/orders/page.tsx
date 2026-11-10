@@ -69,7 +69,7 @@ export default function OrdersPage() {
     <div className="mx-auto max-w-6xl px-4 py-8 grid gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Orders</h1>
+          <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">Orders</h1>
           <p className="text-sm text-muted mt-1">
             Placed by <span className="font-mono">{near.accountId}</span>. Levels appear only where this browser holds the plaintext
             {t.status !== "unlocked" && <> — unlock your trading wallet on <Link className="underline" href="/app">App</Link> to see them</>}.
@@ -79,7 +79,7 @@ export default function OrdersPage() {
       {msg && <Notice tone={msg.tone}>{msg.text}</Notice>}
       {chain.error && <Notice tone="bad">NEAR RPC: {chain.error}</Notice>}
 
-      <div className="border border-line rounded-[8px] bg-panel overflow-x-auto">
+      <div className="card overflow-x-auto">
         <table className="w-full text-sm min-w-[760px]">
           <thead>
             <tr className="text-left text-[11px] uppercase tracking-[0.08em] text-muted border-b border-line">
@@ -152,7 +152,7 @@ export default function OrdersPage() {
                           Reveal
                         </Button>
                       )}
-                      <Link href={`/verify?id=${o.id}`} className="inline-flex items-center h-8 px-3 text-xs rounded-[6px] border border-line-strong hover:border-fg/40">
+                      <Link href={`/verify?id=${o.id}`} className="inline-flex items-center h-8 px-3 text-xs rounded-full border border-line-strong hover:border-fg/40">
                         Proof
                       </Link>
                     </div>
@@ -186,7 +186,7 @@ function OrderCell({ o, l }: { o: OrderView; l: LocalOrder | undefined }) {
     return (
       <div>
         <div className="font-mono">
-          <span className={cx(kind === "SL" ? "text-accent" : "")}>{kind}</span> {coin} {side} @ {px(level)}
+          <span className={cx(kind === "SL" ? "text-accent-text" : "")}>{kind}</span> {coin} {side} @ {px(level)}
         </div>
         <div className="text-xs text-muted">
           {size === "ALL" ? "full position" : `size ${size}`}
