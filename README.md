@@ -138,6 +138,10 @@ docs                  spikes, threat model, operations, demo script
 - OutLayer's documentation and connector examples informed the manifest and sealed-storage patterns.
 - Code was written with Claude Code.
 
+## Other entry by the same team
+
+[VEIL](https://github.com/mrfomoweb3/veil), a separate NEAR HACKATHON entry. The two projects share no code.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).
