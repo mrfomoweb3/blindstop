@@ -164,3 +164,18 @@ export function Check({ children }: { children: ReactNode }) {
 export function Eyebrow({ children }: { children: ReactNode }) {
   return <p className="text-[12.5px] uppercase tracking-[0.14em] text-accent-text font-medium">{children}</p>;
 }
+
+/** Where the technical facts live: collapsed by default, for the curious. */
+export function Details({ title = "Technical details", children }: { title?: string; children: ReactNode }) {
+  return (
+    <details className="group rounded-xl border border-line bg-sunken/60">
+      <summary className="flex cursor-pointer list-none items-center gap-2 px-4 h-11 text-[13px] text-muted hover:text-fg select-none">
+        <svg viewBox="0 0 12 12" className="size-3 transition group-open:rotate-90" aria-hidden>
+          <path d="M4 2.5 7.5 6 4 9.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        {title}
+      </summary>
+      <div className="px-4 pb-4 pt-1 text-[13px] text-soft grid gap-3 min-w-0">{children}</div>
+    </details>
+  );
+}

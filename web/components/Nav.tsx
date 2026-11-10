@@ -9,10 +9,9 @@ import { cx } from "./ui";
 
 const LINKS = [
   ["/", "Home"],
-  ["/app", "App"],
-  ["/app/orders", "Orders"],
-  ["/verify", "Verify"],
-  ["/watcher", "Watcher"],
+  ["/app", "My positions"],
+  ["/app/orders", "History"],
+  ["/watcher", "Status"],
   ["/how-it-works", "How it works"],
 ] as const;
 

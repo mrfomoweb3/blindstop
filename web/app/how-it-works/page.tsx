@@ -1,87 +1,136 @@
 import type { Metadata } from "next";
-import { Code, Panel } from "@/components/ui";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { Check, Details } from "@/components/ui";
 
 export const metadata: Metadata = { title: "How it works" };
 
-const HIDDEN = [
-  ["Stop-loss and take-profit levels", "Sealed to the enclave; never on Hyperliquid's book until one fires."],
-  ["Order size, slippage, existence", "Inside the ciphertext. Every ciphertext is exactly 316 bytes."],
-  ["Which market an order is for", "The coin is inside the ciphertext, not in the NEAR transaction."],
-  ["Which Hyperliquid wallet it protects", "The trading wallet is inside the ciphertext too."],
-  ["Who owns the trading wallet (with Gloam funding)", "Hidden unless amounts, timing, or your own moves link the two sides."],
+const STEPS: [string, string, string][] = [
+  ["1", "You set a stop", "Choose the price where you want out. Before it leaves your device it's locked, so only Blindstop's secure watcher can read it."],
+  ["2", "It's watched, out of sight", "A sealed computer checks Hyperliquid's price every few seconds. Your stop isn't in any public list, so nobody can aim at it."],
+  ["3", "Your trade is closed", "When the price reaches your level, the watcher closes your position straight away and records what happened."],
+  ["4", "You can prove it", "Afterwards you can publish proof of exactly where your stop was and when you set it, so anyone can check."],
 ];
 
-const PUBLIC = [
-  ["Your position", "Size, entry and liquidation price are public on Hyperliquid, as for everyone."],
-  ["The close", "When a stop fires, its reduce-only IOC order and fill are public."],
-  ["Your NEAR account's activity", "Which account placed sealed orders, how many, and when."],
-  ["The agent approval", "That your trading wallet approved an agent. Every user approves the same agent address."],
-  ["Gloam's edges", "Deposits into and cash-outs from Gloam are visible at the vault."],
-];
-
-const TRUST = [
-  ["Intel TDX and OutLayer", "The enclave's memory is unreadable to its operator and its keys are derived by OutLayer's keystore. A broken TEE would expose plaintext stops (never withdrawal rights)."],
-  ["The project owner", "Keys are bound to the OutLayer project and its operator account, so a new version published by the owner holds the same keys. The contract owner can also rotate the pinned keys. Until ownership is locked or moved to a DAO, the owner is trusted."],
-  ["Liveness", "If no keeper calls the enclave, stops do not fire. Mitigations: the optional public backstop near liquidation, heartbeats you can see, and an open-source keeper anyone with an operator payment key can run."],
-  ["Latency", "A stop fires within the tick interval (3 s) plus the enclave run (about 1.5 s) after the cross. A fast wick can fill worse than a native stop, and IOC closes that find no liquidity inside your slippage are retried up to 5 times."],
+const FAQ: [string, ReactNode][] = [
+  [
+    "Why do stops get hunted?",
+    "On Hyperliquid, every order is public, including stop-losses. Tools show where many stops are bunched together, and large traders can push the price into that zone to trigger them, then let it bounce back. Hidden stops give them nothing to aim at.",
+  ],
+  [
+    "Can Blindstop take my money?",
+    "No. You give it permission to close your positions, nothing more. Hyperliquid itself doesn't let that kind of permission withdraw or send funds.",
+  ],
+  [
+    "Who can see my stop price?",
+    "Only you, on your device, and the secure watcher that has to act on it. Not other traders, not Hyperliquid's public order list, and not the people who run Blindstop.",
+  ],
+  [
+    "What can other people still see?",
+    "Your open position, like any trade on Hyperliquid, including its liquidation price. They also see the moment your stop closes it, and that your account uses Blindstop.",
+  ],
+  [
+    "What if Blindstop goes offline?",
+    <>
+      Then stops can&rsquo;t trigger until it&rsquo;s back. You can always see whether it&rsquo;s running on the{" "}
+      <Link href="/watcher" className="underline underline-offset-2">Status</Link> page. To be safe, keep the optional safety net on: a backup
+      stop near your liquidation price that protects you even if Blindstop is down.
+    </>,
+  ],
+  [
+    "Is it as fast as a normal stop?",
+    "Almost. Your stop triggers within a few seconds of the price reaching it. In a very sudden move, the price you get can be a little worse than a stop that sits on the exchange.",
+  ],
+  [
+    "Do I need a new wallet?",
+    "Yes, a separate trading wallet just for Blindstop, created in the app in a few seconds. It keeps your main wallet out of it entirely.",
+  ],
 ];
 
 export default function HowItWorks() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 grid grid-cols-1 gap-8">
-      <div>
-        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">How it works</h1>
-        <p className="text-sm text-muted mt-1 max-w-2xl">What Blindstop hides, what it cannot hide, and what you have to trust. Stated plainly.</p>
+    <div className="mx-auto max-w-5xl px-4 py-8 grid grid-cols-1 gap-12">
+      <div className="text-center pt-6">
+        <h1 className="headline text-[36px] sm:text-[48px] leading-tight">
+          How <strong>Blindstop</strong> works
+        </h1>
+        <p className="mt-4 text-[15px] text-soft max-w-xl mx-auto">Hidden stop-losses in four steps, and straight answers about what you&rsquo;re trusting.</p>
       </div>
 
-      <Panel title="The path of a stop">
-        <Code>{`browser ── seal(order) to enclave x25519 key ──▶ NEAR  place_order(ciphertext, commitment)
-                                                   │
-keeper (every 3 s) ── POST /call ──▶ OutLayer TEE ─┤ read get_active from 2 independent RPCs (must match)
-                                                   │ decrypt, check wallet signature, read Hyperliquid mark
-                                                   │ crossed? → reduce-only IOC close, signed by the agent key
-                                                   ▼
-keeper ◀── ed25519-signed report ──  record_fire ──▶ NEAR verifies the signature, marks the order Fired`}</Code>
-      </Panel>
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <Table title="Hidden" rows={HIDDEN} tone="good" />
-        <Table title="Still public" rows={PUBLIC} tone="bad" />
-      </div>
-
-      <Table title="What you trust" rows={TRUST} />
-
-      <Panel title="Safety properties you can test">
-        <ul className="text-sm leading-relaxed text-soft list-disc pl-5 space-y-1.5">
-          <li>A report with a forged signature, a replayed report, or a valid report for another order is refused by the contract.</li>
-          <li>The enclave reads nothing that matters from its input: fake prices or orders sent by a keeper are ignored.</li>
-          <li>If the two NEAR RPCs disagree about the active orders, the enclave refuses to act at all.</li>
-          <li>A ciphertext moved to another NEAR account does not decrypt (the owner is in the authenticated data).</li>
-          <li>An order naming a wallet that did not sign a binding to your NEAR account is retired as invalid, never acted on.</li>
-          <li>Only the order&rsquo;s owner can cancel or reveal it, and a reveal with the wrong preimage is refused.</li>
-        </ul>
-        <p className="mt-3 text-xs text-muted">
-          <code className="font-mono">scripts/attacks.ts</code> runs these against the deployed contract and enclave and prints ALL ATTACKS REFUSED.
-        </p>
-      </Panel>
-    </div>
-  );
-}
-
-function Table({ title, rows, tone }: { title: string; rows: string[][]; tone?: "good" | "bad" }) {
-  return (
-    <section className="card">
-      <header className="px-4 sm:px-5 h-11 flex items-center border-b border-line">
-        <h2 className={`text-[13px] font-medium ${tone === "good" ? "text-good" : tone === "bad" ? "text-bad" : ""}`}>{title}</h2>
-      </header>
-      <dl className="divide-y divide-line">
-        {rows.map(([k, v]) => (
-          <div key={k} className="px-4 sm:px-5 py-3 grid gap-0.5">
-            <dt className="text-sm font-medium">{k}</dt>
-            <dd className="text-[13px] text-soft leading-relaxed">{v}</dd>
-          </div>
+      <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {STEPS.map(([n, title, text], i) => (
+          <li key={n} className={i === 1 ? "card p-6 lime-glow" : "card p-6"}>
+            <span
+              className={
+                i === 1
+                  ? "grid place-items-center size-9 rounded-full bg-accent text-accent-ink font-medium"
+                  : "grid place-items-center size-9 rounded-full border border-line-strong"
+              }
+            >
+              {n}
+            </span>
+            <h2 className="mt-4 text-[15px] font-medium">{title}</h2>
+            <p className="mt-2 text-[13px] leading-relaxed text-muted">{text}</p>
+          </li>
         ))}
-      </dl>
-    </section>
+      </ol>
+
+      <section className="grid md:grid-cols-2 gap-4">
+        <div className="card p-6">
+          <h2 className="text-lg font-light tracking-tight text-accent-text">Hidden from everyone</h2>
+          <ul className="mt-4 grid gap-2.5">
+            <Check>Your stop-loss and take-profit prices</Check>
+            <Check>How much of your position they&rsquo;ll close</Check>
+            <Check>Which coin they&rsquo;re for</Check>
+            <Check>Which wallet they protect</Check>
+          </ul>
+        </div>
+        <div className="card p-6">
+          <h2 className="text-lg font-light tracking-tight">Still visible, as on any exchange</h2>
+          <ul className="mt-4 grid gap-2.5 text-[13px] text-muted list-disc pl-5">
+            <li>Your open position and its liquidation price</li>
+            <li>The moment a stop closes your trade</li>
+            <li>That your account uses Blindstop, and when you set stops</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="grid gap-3">
+        <h2 className="headline text-[28px] sm:text-[34px] text-center mb-3">
+          Common <strong>questions</strong>
+        </h2>
+        {FAQ.map(([q, a]) => (
+          <details key={q} className="card group px-6 py-4">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-medium">
+              {q}
+              <span className="text-muted transition group-open:rotate-45 text-xl leading-none" aria-hidden>
+                +
+              </span>
+            </summary>
+            <p className="mt-3 text-[13.5px] leading-relaxed text-soft">{a}</p>
+          </details>
+        ))}
+      </section>
+
+      <Details title="For the technically curious">
+        <p>
+          Stops are encrypted in the browser (X25519, HKDF-SHA256, ChaCha20-Poly1305) to a key that exists only inside an OutLayer enclave
+          (Intel TDX). The NEAR contract stores only the 316-byte ciphertext and a SHA-256 commitment. Each order also carries a signature
+          from the trading wallet, so nobody can seal an order against someone else&rsquo;s wallet.
+        </p>
+        <p>
+          Every few seconds the enclave reads the active orders from two independent NEAR RPC providers (they must agree) and the mark
+          price from Hyperliquid. When a level is crossed it sends a reduce-only IOC close as the user&rsquo;s approved agent and returns an
+          ed25519-signed report, which the contract verifies before marking the order as triggered.
+        </p>
+        <p>
+          The full threat model, test evidence and source code are in the{" "}
+          <a className="underline underline-offset-2" href="https://github.com/mrfomoweb3/blindstop" target="_blank" rel="noreferrer">
+            GitHub repository
+          </a>
+          .
+        </p>
+      </Details>
+    </div>
   );
 }

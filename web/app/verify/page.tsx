@@ -3,26 +3,36 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { base64ToBytes, bytesToHex, commitmentOf, decodeOrder, hexToBytes, type OrderView, type SealedOrder } from "@blindstop/shared";
-import { Button, cx, Input, Label, Mono, Notice, Panel, Pill } from "@/components/ui";
+import { Button, Details, Input, Label, Mono, Notice } from "@/components/ui";
 import { CONTRACT } from "@/lib/config";
-import { dateTime, nsToDate, px } from "@/lib/format";
+import { friendly } from "@/lib/errors";
+import { nsToDate, px } from "@/lib/format";
 import { views } from "@/lib/near";
 import { useTrading } from "@/lib/trading";
 import * as vault from "@/lib/vault";
 
-function parsePreimage(s: string): Uint8Array {
-  const t = s.trim();
-  if (/^(0x)?[0-9a-fA-F]+$/.test(t)) return hexToBytes(t);
-  return base64ToBytes(t);
-}
-
 interface Result {
   order: OrderView;
-  preimage: Uint8Array;
   recomputed: string;
   match: boolean;
   decoded: SealedOrder | null;
-  source: "revealed on NEAR" | "this browser" | "pasted";
+}
+
+function parsePreimage(s: string): Uint8Array {
+  const t = s.trim();
+  return /^(0x)?[0-9a-fA-F]+$/.test(t) ? hexToBytes(t) : base64ToBytes(t);
+}
+
+function when(d: Date | null): string {
+  return d ? d.toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+}
+
+function gap(ms: number): string {
+  const m = Math.round(ms / 60000);
+  if (m < 1) return "less than a minute";
+  if (m < 120) return `${m} minute${m === 1 ? "" : "s"}`;
+  const h = Math.round(m / 60);
+  return h < 48 ? `${h} hours` : `${Math.round(h / 24)} days`;
 }
 
 function VerifyInner() {
@@ -40,21 +50,20 @@ function VerifyInner() {
     setBusy(true);
     try {
       const order = await views.getOrder(id.trim());
-      if (!order) throw new Error(`order ${id} does not exist on ${CONTRACT}`);
+      if (!order) throw new Error(`There is no stop number ${id}.`);
       let preimage: Uint8Array | null = null;
-      let source: Result["source"] = "pasted";
       if (paste.trim()) preimage = parsePreimage(paste);
-      else if (order.revealed) {
-        preimage = base64ToBytes(order.revealed);
-        source = "revealed on NEAR";
-      } else if (t.vaultKey) {
+      else if (order.revealed) preimage = base64ToBytes(order.revealed);
+      else if (t.vaultKey) {
         const mine = (await vault.listOrders(t.vaultKey, CONTRACT)).find((l) => l.commitment === order.commitment);
-        if (mine) {
-          preimage = base64ToBytes(mine.plaintext);
-          source = "this browser";
-        }
+        if (mine) preimage = base64ToBytes(mine.plaintext);
       }
-      if (!preimage) throw new Error("this order is not revealed; paste its preimage (hex or base64) or unlock the wallet that sealed it");
+      if (!preimage)
+        throw new Error(
+          order.status === "Active"
+            ? "This stop is still protecting someone, so its price is private."
+            : "The owner hasn't published proof for this stop yet.",
+        );
       if (tamper) {
         preimage = preimage.slice();
         const i = Math.min(preimage.length - 1, 30);
@@ -67,9 +76,9 @@ function VerifyInner() {
       } catch {
         decoded = null;
       }
-      setRes({ order, preimage, recomputed, match: recomputed === order.commitment, decoded, source });
+      setRes({ order, recomputed, match: recomputed === order.commitment, decoded });
     } catch (e) {
-      setErr((e as Error).message);
+      setErr(friendly(e));
     } finally {
       setBusy(false);
     }
@@ -81,113 +90,98 @@ function VerifyInner() {
   }, []);
 
   const placed = res ? nsToDate(res.order.created_ns) : null;
-  const firedMs = res?.order.fire ? Number(res.order.fire.ts_ms) : null;
+  const firedMs = res?.order.fire && res.order.status === "Fired" ? Number(res.order.fire.ts_ms) : null;
+  const d = res?.decoded;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 grid grid-cols-1 gap-6">
+    <div className="mx-auto max-w-3xl px-4 py-8 grid grid-cols-1 gap-6">
       <div>
-        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">Verify a sealed order</h1>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
-          NEAR stored a commitment, <Mono>sha256(&quot;blindstop:v1:order&quot; ‖ order)</Mono>, the moment the order was placed. Hash the
-          preimage here, in your browser, and compare. A match proves the level existed, exactly, before the price moved.
+        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">Check a stop</h1>
+        <p className="text-sm text-muted mt-1 max-w-xl">
+          Every hidden stop is recorded the moment it&rsquo;s set, in a way nobody can change later. Enter a stop number to check that its
+          price is exactly what was set, and when.
         </p>
       </div>
-      <Panel>
-        <form
-          className="grid gap-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void check();
-          }}
-        >
-          <div className="grid sm:grid-cols-[10rem_1fr] gap-3">
-            <label>
-              <Label>Order id</Label>
-              <Input mono inputMode="numeric" value={id} onChange={(e) => setId(e.target.value.replace(/\D/g, ""))} />
-            </label>
-            <label>
-              <Label hint="optional if revealed">Preimage (hex or base64 borsh)</Label>
-              <Input mono value={paste} onChange={(e) => setPaste(e.target.value)} placeholder="loaded from NEAR or this browser when empty" />
-            </label>
+      <form
+        className="card p-5 sm:p-6 flex flex-wrap items-end gap-3"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void check();
+        }}
+      >
+        <label className="flex-1 min-w-[10rem]">
+          <Label>Stop number</Label>
+          <Input mono inputMode="numeric" placeholder="e.g. 6" value={id} onChange={(e) => setId(e.target.value.replace(/\D/g, ""))} />
+        </label>
+        <Button variant="primary" type="submit" busy={busy} disabled={!id}>
+          Check
+        </Button>
+      </form>
+      {err && <Notice>{err}</Notice>}
+
+      {res && res.match && d && (
+        <section className="card lime-glow p-6 sm:p-8 grid gap-5">
+          <div className="flex items-center gap-3">
+            <span className="grid place-items-center size-10 rounded-full bg-accent text-accent-ink text-lg" aria-hidden>
+              ✓
+            </span>
+            <div>
+              <h2 className="text-lg font-medium">Genuine</h2>
+              <p className="text-sm text-muted">This is exactly the stop that was set. It hasn&rsquo;t been changed.</p>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="primary" type="submit" busy={busy} disabled={!id}>Verify</Button>
-            <Button type="button" disabled={!id || busy} onClick={() => void check(true)} title="Flip one byte of the preimage and check again">
-              Tamper one byte
-            </Button>
-          </div>
-        </form>
-      </Panel>
-      {err && <Notice tone="bad">{err}</Notice>}
-      {res && (
-        <Panel
-          title={`Order ${res.order.id}`}
-          aside={<Pill tone={res.match ? "good" : "bad"} dot>{res.match ? "commitment matches" : "does not match"}</Pill>}
-        >
-          <div className="grid gap-4 text-sm">
-            <dl className="grid sm:grid-cols-[11rem_1fr] gap-x-4 gap-y-2 font-mono text-[12.5px]">
-              <dt className="text-muted">on NEAR</dt>
-              <dd className="break-all">{res.order.commitment}</dd>
-              <dt className="text-muted">recomputed</dt>
-              <dd className={cx("break-all", res.match ? "text-good" : "text-bad")}>{res.recomputed}</dd>
-              <dt className="text-muted">preimage from</dt>
-              <dd>{res.source}</dd>
-              <dt className="text-muted">placed</dt>
-              <dd>
-                {dateTime(placed)} · block {res.order.created_height}
-              </dd>
-              {firedMs && (
-                <>
-                  <dt className="text-muted">fired</dt>
-                  <dd>
-                    {dateTime(new Date(firedMs))}
-                    {placed && <span className="text-muted"> · {formatGap(firedMs - placed.getTime())} after it was committed</span>}
-                  </dd>
-                </>
-              )}
-              <dt className="text-muted">status</dt>
-              <dd>{res.order.status}</dd>
-            </dl>
-            {res.match && res.decoded && (
-              <div className="border-t border-line pt-4 grid sm:grid-cols-4 gap-3 font-mono text-[13px]">
-                <KV k="market" v={`${res.decoded.coin} (${res.decoded.network})`} />
-                <KV k="protects" v={`${res.decoded.side} position`} />
-                <KV k="kind" v={res.decoded.kind === "stop_loss" ? "stop-loss" : "take-profit"} />
-                <KV k="level" v={px(res.decoded.triggerPx)} />
-                <KV k="size" v={res.decoded.size === "ALL" ? "full position" : res.decoded.size} />
-                <KV k="slippage" v={`${res.decoded.slippageBps} bps`} />
-                <KV k="wallet" v={`${res.decoded.hlAddress.slice(0, 10)}…`} />
-                {res.order.fire && res.order.status === "Fired" && <KV k="filled" v={`${res.order.fire.filled_sz} @ ${px(res.order.fire.avg_px)}`} />}
-              </div>
+          <p className="text-[15px] leading-relaxed text-soft">
+            A <strong className="text-fg font-medium">{d.kind === "stop_loss" ? "stop-loss" : "take-profit"}</strong> on{" "}
+            <strong className="text-fg font-medium">{d.coin}</strong> at <strong className="text-fg font-medium">${px(d.triggerPx)}</strong>,
+            protecting a {d.side} position, was set on <strong className="text-fg font-medium">{when(placed)}</strong>.
+            {firedMs && placed && (
+              <>
+                {" "}
+                It triggered <strong className="text-fg font-medium">{gap(firedMs - placed.getTime())}</strong> later and closed{" "}
+                {res.order.fire!.filled_sz} {d.coin} at ${px(res.order.fire!.avg_px)}.
+              </>
             )}
-            {!res.match && (
-              <Notice tone="bad">
-                This preimage is not what was committed. Either it was altered or it belongs to another order. A level cannot be changed after
-                it is placed.
-              </Notice>
-            )}
-          </div>
-        </Panel>
+            {res.order.status === "Skipped" && " When the price got there, the trade had already been closed, so there was nothing to do."}
+          </p>
+        </section>
       )}
+
+      {res && !res.match && (
+        <section className="card p-6 sm:p-8 grid gap-2">
+          <h2 className="text-lg font-medium text-bad">Doesn&rsquo;t match</h2>
+          <p className="text-sm text-soft">
+            This isn&rsquo;t the stop that was recorded. Either it was altered or it belongs to a different stop. A stop&rsquo;s price
+            can&rsquo;t be changed once it&rsquo;s set.
+          </p>
+        </section>
+      )}
+
+      <Details>
+        <p>
+          When a stop is set, NEAR stores a fingerprint of it: <Mono>sha256(&quot;blindstop:v1:order&quot; ‖ order)</Mono>. Checking means
+          hashing the published order in your browser and comparing the two.
+        </p>
+        {res && (
+          <dl className="grid gap-1 font-mono text-[12px] break-all">
+            <dt className="text-muted font-sans">Recorded fingerprint</dt>
+            <dd>{res.order.commitment}</dd>
+            <dt className="text-muted font-sans mt-2">Fingerprint of what you checked</dt>
+            <dd className={res.match ? "text-good" : "text-bad"}>{res.recomputed}</dd>
+          </dl>
+        )}
+        <label>
+          <Label>Check your own data instead (hex or base64)</Label>
+          <Input mono value={paste} onChange={(e) => setPaste(e.target.value)} placeholder="optional" />
+        </label>
+        <div>
+          <Button type="button" disabled={!id || busy} onClick={() => void check(true)}>
+            Try a forged copy
+          </Button>
+          <span className="ml-3 text-xs text-muted">Changes one byte and checks again, to show a fake gets caught.</span>
+        </div>
+      </Details>
     </div>
   );
-}
-
-function KV({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="min-w-0">
-      <div className="text-[11px] uppercase tracking-[0.08em] text-muted font-sans">{k}</div>
-      <div className="truncate">{v}</div>
-    </div>
-  );
-}
-
-function formatGap(ms: number): string {
-  const s = Math.round(ms / 1000);
-  if (s < 120) return `${s}s`;
-  const m = Math.round(s / 60);
-  if (m < 120) return `${m} min`;
-  return `${Math.round(m / 60)} h`;
 }
 
 export default function VerifyPage() {

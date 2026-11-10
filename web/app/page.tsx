@@ -1,108 +1,86 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Check, Code, Eyebrow, IconTile, cx } from "@/components/ui";
+import { Check, Eyebrow, IconTile, cx } from "@/components/ui";
 
 export default function Landing() {
   return (
     <div className="mx-auto max-w-6xl px-4">
       {/* ── hero ── */}
       <section className="pt-20 sm:pt-28 text-center">
-        <Eyebrow>Hidden stops for Hyperliquid · NEAR × OutLayer TEE</Eyebrow>
+        <Eyebrow>Private stop-losses for Hyperliquid</Eyebrow>
         <h1 className="headline mt-5 text-[40px] sm:text-[60px] leading-[1.05]">
           Your <strong>stop-loss</strong>, sealed.
           <br />
           <strong>Invisible</strong> until it fires.
         </h1>
         <p className="mt-6 mx-auto max-w-[36rem] text-[15.5px] leading-relaxed text-soft">
-          Every stop on Hyperliquid&rsquo;s order book is public, and traders hunt them. Blindstop keeps yours off the book entirely,
-          sealed to an enclave on NEAR that watches the mark price and closes your position the moment your level is hit.
+          On Hyperliquid, everyone can see where your stop-loss sits, and big traders push the price there on purpose to knock you
+          out. Blindstop keeps your stop hidden and closes your position for you the moment the price gets there.
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-3">
           <Link href="/app" className="inline-flex items-center h-11 px-7 rounded-full bg-accent text-accent-ink text-[13px] font-semibold uppercase tracking-[0.05em] lime-glow hover:brightness-105">
             Seal a stop
           </Link>
           <Link href="/how-it-works" className="inline-flex items-center h-11 px-7 rounded-full border border-line-strong text-[13px] font-medium uppercase tracking-[0.05em] hover:border-accent/60">
-            What is hidden
+            How it works
           </Link>
         </div>
       </section>
 
       <section className="horizon mt-24 sm:mt-28 pt-10">
         <ProductFrame />
-        <p className="relative mt-3 text-center text-[11.5px] text-faint">Illustration of the app. Prices and wallet are examples.</p>
+        <p className="relative mt-3 text-center text-[11.5px] text-faint">A preview of the app. Prices are examples.</p>
       </section>
 
       {/* ── before / after ── */}
-      <section className="mt-28 grid lg:grid-cols-2 gap-4">
-        <div className="card p-5 sm:p-6 min-w-0">
-          <div className="flex items-center justify-between text-[13px]">
-            <span className="font-medium">A normal stop</span>
-            <span className="font-mono text-bad text-xs">readable by anyone</span>
-          </div>
-          <div className="mt-4">
-            <Code>{`POST api.hyperliquid.xyz/info
-{"type":"frontendOpenOrders","user":"0x9f2c…e41a"}
-
-[{ "coin": "BTC", "orderType": "Stop Market",
-   "triggerPx": "94800", "sz": "1.25",
-   "reduceOnly": true }]`}</Code>
-          </div>
-        </div>
-        <div className="card p-5 sm:p-6 min-w-0 lime-glow">
-          <div className="flex items-center justify-between text-[13px]">
-            <span className="font-medium">A Blindstop stop</span>
-            <span className="font-mono text-accent-text text-xs">nothing to hunt</span>
-          </div>
-          <div className="mt-4 grid gap-2">
-            <Code>{`POST api.hyperliquid.xyz/info
-{"type":"frontendOpenOrders","user":"0x9f2c…e41a"}
-
-[]`}</Code>
-            <Code>{`NEAR blindstop.testnet · place_order
-ciphertext  316 bytes  7f3a91c4e0…  sealed to the enclave
-commitment  sha256     c21e9b07aa…  proves the level later`}</Code>
-          </div>
+      <section className="mt-28 text-center">
+        <h2 className="headline text-[34px] sm:text-[44px] leading-tight">
+          They can&rsquo;t hunt <strong>what they can&rsquo;t see</strong>
+        </h2>
+        <div className="mt-12 grid lg:grid-cols-2 gap-4 text-left">
+          <HuntCard visible />
+          <HuntCard />
         </div>
       </section>
 
       {/* ── phases ── */}
       <section className="mt-32 text-center">
         <h2 className="headline text-[34px] sm:text-[44px] leading-tight">
-          From <strong>seal</strong> to <strong>fill</strong>
+          Set it once, <strong>sleep easy</strong>
         </h2>
         <p className="mt-4 mx-auto max-w-xl text-[15px] text-soft">
-          Three steps, each checkable. Your browser seals, an enclave watches, NEAR verifies.
+          Set it once. Blindstop does the watching, and closes your position for you.
         </p>
         <div className="mt-14 grid md:grid-cols-3 gap-4 text-left">
           <Phase
-            name="Seal"
+            name="Hide"
             n={1}
-            text="Your browser encrypts the stop to the enclave's key. NEAR stores only ciphertext and a commitment; the level, size, market and wallet are inside."
+            text="Pick your stop-loss or take-profit price. It is locked before it leaves your device, so only Blindstop's secure watcher can read it."
             rows={[
-              ["Ciphertext, every order", "316 B"],
-              ["Orders on Hyperliquid's book", "0"],
-              ["Wallet binding", "EIP-191"],
+              ["Who can see your price", "only you"],
+              ["Orders anyone can see", "none"],
+              ["Time to set up", "1 minute"],
             ]}
           />
           <Phase
             name="Watch"
             n={2}
             highlight
-            text="An OutLayer enclave (Intel TDX) reads the sealed orders from two NEAR providers that must agree, and the mark price from Hyperliquid. Its input carries no prices."
+            text="A sealed computer that not even we can look inside checks the price around the clock, using Hyperliquid's own price."
             rows={[
-              ["Tick interval", "3 s"],
-              ["NEAR RPCs that must agree", "2 / 2"],
-              ["Keys outside the TEE", "none"],
+              ["Checks the price every", "3 seconds"],
+              ["Runs while you sleep", "yes"],
+              ["Can anyone fake the price", "no"],
             ]}
           />
           <Phase
             name="Close"
             n={3}
-            text="On a cross, the enclave closes your position as your approved agent and signs a report. Anyone can submit it; NEAR checks the signature and records the fill."
+            text="When the price reaches your level, your position is closed right away and the result is recorded publicly, so you can always check what happened."
             rows={[
-              ["Close order", "reduce-only IOC"],
-              ["Retries if unfilled", "5"],
-              ["Agent can withdraw", "never"],
+              ["Closes your position", "instantly"],
+              ["Tries again if needed", "up to 5×"],
+              ["Can it withdraw your money", "never"],
             ]}
           />
         </div>
@@ -113,31 +91,31 @@ commitment  sha256     c21e9b07aa…  proves the level later`}</Code>
         <div className="card p-6 sm:p-8 flex flex-col justify-between min-h-[320px] overflow-hidden relative">
           <div className="relative">
             <h2 className="headline text-[30px] sm:text-[36px] leading-tight">
-              Why trade with <strong>sealed stops</strong>
+              Why traders use <strong>hidden stops</strong>
             </h2>
             <ul className="mt-6 grid sm:grid-cols-2 gap-x-6 gap-y-2.5">
-              <Check>Nothing on the public book</Check>
-              <Check>Market and wallet stay sealed</Check>
-              <Check>Agent cannot withdraw</Check>
-              <Check>Provable after the fact</Check>
+              <Check>No one can see your stop</Check>
+              <Check>No one knows which coin</Check>
+              <Check>Your money can&rsquo;t be withdrawn</Check>
+              <Check>You can prove it later</Check>
             </ul>
           </div>
           <div className="relative mt-8 grid gap-4 sm:max-w-[48%]">
-            <Fact k="Signing" v="byte-identical to the Python SDK" />
-            <Fact k="Attacks refused" v="9 of 9 on testnet" />
+            <Fact k="Attack-tested" v="9 of 9 break-in attempts blocked" />
+            <Fact k="Open source" v="anyone can check the code" />
           </div>
           <Link href="/app" className="relative mt-7 self-start inline-flex items-center h-9 px-5 rounded-full bg-accent text-accent-ink text-xs font-semibold uppercase tracking-[0.05em]">
-            Start sealing
+            Get started
           </Link>
           <Bars />
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
-          <Feature icon={<IconEye />} title="Nothing to hunt" text="Trackers read Hyperliquid's book. Your stop is never on it until the moment it closes your position." />
-          <Feature icon={<IconKey />} title="Your wallet stays yours" text="A fresh trading wallet whose key never leaves your browser. The watcher is an agent: it trades, it cannot withdraw." />
-          <Feature icon={<IconShield />} title="Can't be fed fake prices" text="The enclave ignores its input. Orders come from NEAR, prices from Hyperliquid, read by the enclave itself." />
-          <Feature icon={<IconCheck />} title="Prove it later" text="Reveal a closed order and anyone can check, against NEAR, that the level was set before the price moved." />
-          <Feature icon={<IconLife />} title="Backstop near liquidation" text="Optional: a wide public stop placed with your own key, in case the watcher ever goes quiet." />
-          <Feature icon={<IconPulse />} title="Watcher you can watch" text="Every tick ends in a signed heartbeat on NEAR. Its age is on every page." />
+          <Feature icon={<IconEye />} title="Nothing to hunt" text="Normal stops sit in a public list anyone can read. Yours never does, until the moment it closes your trade." />
+          <Feature icon={<IconKey />} title="Your money stays yours" text="Blindstop can only close your positions. It can never withdraw, send or move your funds anywhere." />
+          <Feature icon={<IconShield />} title="Can't be tricked" text="Blindstop reads the price straight from Hyperliquid. Nobody can feed it a fake price to trigger your stop." />
+          <Feature icon={<IconCheck />} title="Proof when you need it" text="After a stop triggers, you can publish proof of exactly where it was and when you set it." />
+          <Feature icon={<IconLife />} title="A safety net" text="Optionally keep a wide backup stop near your liquidation price, so you're covered even if Blindstop ever goes quiet." />
+          <Feature icon={<IconPulse />} title="Always know it's on" text="Every page shows whether protection is running, and when it last checked the price." />
         </div>
       </section>
 
@@ -149,31 +127,30 @@ commitment  sha256     c21e9b07aa…  proves the level later`}</Code>
         </div>
         <div className="p-6 sm:p-10">
           <h2 className="headline text-[30px] sm:text-[36px] leading-tight">
-            Sealed with care, <strong>stated plainly</strong>
+            What&rsquo;s hidden, <strong>honestly</strong>
           </h2>
-          <p className="mt-3 text-sm text-soft max-w-md">What Blindstop hides, and what it cannot. Your position and its liquidation price are public, as for everyone.</p>
+          <p className="mt-3 text-sm text-soft max-w-md">No fine print. Here is exactly what other people can and can&rsquo;t see.</p>
           <div className="mt-6 grid sm:grid-cols-2 gap-6">
             <div>
               <div className="text-[11px] uppercase tracking-[0.12em] text-accent-text mb-3">Hidden</div>
               <ul className="grid gap-2">
-                <Check>Stop and take-profit levels</Check>
-                <Check>Size and slippage</Check>
-                <Check>Which market</Check>
-                <Check>Which trading wallet</Check>
+                <Check>Your stop-loss and take-profit prices</Check>
+                <Check>How much you&rsquo;re protecting</Check>
+                <Check>Which coin it&rsquo;s for</Check>
+                <Check>Which wallet it belongs to</Check>
               </ul>
             </div>
             <div>
               <div className="text-[11px] uppercase tracking-[0.12em] text-muted mb-3">Still public</div>
               <ul className="grid gap-2 text-[13px] text-muted">
-                <li>Your position and liquidation price</li>
-                <li>The close, when a stop fires</li>
-                <li>Your NEAR account&rsquo;s activity</li>
-                <li>That you approved an agent</li>
+                <li>Your open position, like any trade on Hyperliquid</li>
+                <li>The moment your stop closes it</li>
+                <li>That your account uses Blindstop</li>
               </ul>
             </div>
           </div>
           <Link href="/how-it-works" className="mt-8 inline-flex items-center h-9 px-5 rounded-full border border-line-strong text-xs font-medium uppercase tracking-[0.05em] hover:border-accent/60">
-            Full table and trust model
+            Learn more
           </Link>
         </div>
       </section>
@@ -183,6 +160,41 @@ commitment  sha256     c21e9b07aa…  proves the level later`}</Code>
           Gloam hides <strong>who you are</strong>. Blindstop hides <strong>where your stops are</strong>.
         </p>
       </section>
+    </div>
+  );
+}
+
+function HuntCard({ visible }: { visible?: boolean }) {
+  const pts = [62, 58, 60, 52, 55, 47, 50, 44, 47, 40, 44, 38, 42, 46, 43, 49, 46, 53, 50, 57];
+  const path = pts.map((y, i) => `${i ? "L" : "M"}${10 + i * 15.5},${y}`).join(" ");
+  return (
+    <div className={cx("card p-6 min-w-0", !visible && "lime-glow")}>
+      <div className="flex items-center justify-between">
+        <h3 className="text-[15px] font-medium">{visible ? "A normal stop-loss" : "A Blindstop stop-loss"}</h3>
+        <span className={cx("text-xs", visible ? "text-bad" : "text-accent-text")}>{visible ? "Everyone can see it" : "No one can see it"}</span>
+      </div>
+      <svg viewBox="0 0 320 110" className="mt-5 w-full h-36" aria-hidden>
+        <path d={path} fill="none" stroke="var(--soft)" strokeWidth="2" strokeLinejoin="round" />
+        {visible ? (
+          <>
+            <line x1="0" x2="320" y1="80" y2="80" stroke="var(--bad)" strokeDasharray="4 4" />
+            <text x="316" y="96" textAnchor="end" fontSize="10" fill="var(--bad)" fontFamily="var(--font-geist-sans)">Your stop · $94,800</text>
+            <path d="M196 48 L204 78" stroke="var(--bad)" strokeWidth="2" markerEnd="url(#a)" />
+            <defs>
+              <marker id="a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0L10 5L0 10z" fill="var(--bad)" />
+              </marker>
+            </defs>
+          </>
+        ) : (
+          <text x="316" y="96" textAnchor="end" fontSize="10" fill="var(--accent-text)" fontFamily="var(--font-geist-sans)">Your stop · hidden</text>
+        )}
+      </svg>
+      <p className="mt-3 text-[13.5px] leading-relaxed text-soft">
+        {visible
+          ? "Your price sits in a public list. Traders with deep pockets can see where many stops are bunched up, push the price there to trigger them, then let it bounce back."
+          : "Your price is locked away. There is nothing in the public list to aim at, so nobody can push the price to your stop on purpose."}
+      </p>
     </div>
   );
 }
@@ -206,7 +218,7 @@ function Phase({ name, n, text, rows, highlight }: { name: string; n: number; te
             <div key={k} className="flex items-center gap-3 border-t border-line pt-3">
               <span className={cx("size-1.5 rounded-full", highlight ? "bg-accent" : "bg-faint")} />
               <dt className="text-[13px]">{k}</dt>
-              <dd className="ml-auto font-mono text-[12.5px] text-soft">{v}</dd>
+              <dd className="ml-auto text-[13px] text-soft">{v}</dd>
             </div>
           ))}
         </dl>
@@ -269,7 +281,7 @@ function Envelope() {
       <circle cx="110" cy="98" r="22" fill="var(--accent)" />
       <path d="M100 98h7M113 98h7" stroke="var(--accent-ink)" strokeWidth="3" strokeLinecap="round" />
       <rect x="106.5" y="88" width="7" height="20" rx="1.8" fill="var(--accent-ink)" />
-      <text x="110" y="24" textAnchor="middle" fontFamily="var(--font-geist-mono)" fontSize="9" fill="var(--muted)">316 bytes · sealed</text>
+      <text x="110" y="24" textAnchor="middle" fontFamily="var(--font-geist-sans)" fontSize="10" fill="var(--muted)">locked · only Blindstop can open</text>
     </svg>
   );
 }
@@ -285,11 +297,10 @@ function ProductFrame() {
             <span className="size-2.5 rounded-full bg-line-strong" />
             <span className="size-2.5 rounded-full bg-line-strong" />
           </span>
-          <span className="hidden sm:inline">Your sealed stops</span>
+          <span className="hidden sm:inline">My positions</span>
           <span className="ml-auto inline-flex items-center gap-1.5 h-6 px-2 rounded-full border border-good/35 text-good">
-            <span className="size-1.5 rounded-full bg-current" /> watcher 2s ago
+            <span className="size-1.5 rounded-full bg-current" /> Protection on
           </span>
-          <span className="hidden sm:inline font-mono">testnet</span>
         </div>
         <div className="grid sm:grid-cols-[1.2fr_1fr]">
           <div className="p-4 sm:p-5 border-b sm:border-b-0 sm:border-r border-line">
@@ -299,9 +310,9 @@ function ProductFrame() {
               <span className="ml-auto font-mono text-[12.5px] text-good">+$412.80</span>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3 text-[11px] uppercase tracking-[0.08em] text-muted">
-              <div>Mark<div className="mt-1 font-mono text-[13px] normal-case tracking-normal text-fg">96,412</div></div>
+              <div>Price now<div className="mt-1 font-mono text-[13px] normal-case tracking-normal text-fg">96,412</div></div>
               <div>Entry<div className="mt-1 font-mono text-[13px] normal-case tracking-normal text-fg">94,760</div></div>
-              <div>Liq<div className="mt-1 font-mono text-[13px] normal-case tracking-normal text-warn">81,930</div></div>
+              <div>Liquidation<div className="mt-1 font-mono text-[13px] normal-case tracking-normal text-warn">81,930</div></div>
             </div>
             <svg viewBox="0 0 300 90" className="mt-4 w-full h-24" aria-hidden>
               {Array.from({ length: 34 }, (_, i) => {
@@ -311,28 +322,28 @@ function ProductFrame() {
                 return <rect key={i} x={Math.round((6 + i * 8.6) * 10) / 10} y={y - hh / 2} width="4.2" height={hh} rx="1" fill={up ? "var(--soft)" : "var(--faint)"} opacity={0.55} />;
               })}
               <line x1="0" x2="300" y1="74" y2="74" stroke="var(--accent)" strokeDasharray="3 4" opacity="0.8" />
-              <text x="296" y="70" textAnchor="end" fontSize="8" fontFamily="var(--font-geist-mono)" fill="var(--accent-text)">SL sealed · visible only to you</text>
+              <text x="296" y="70" textAnchor="end" fontSize="8" fontFamily="var(--font-geist-mono)" fill="var(--accent-text)">your stop · only you can see it</text>
             </svg>
           </div>
           <div className="p-4 sm:p-5 grid gap-3 content-start">
-            <div className="text-[11px] uppercase tracking-[0.08em] text-muted">Sealed levels</div>
+            <div className="text-[11px] uppercase tracking-[0.08em] text-muted">Your hidden orders</div>
             {[
-              ["SL", "91,500", "−5.10%"],
-              ["TP", "103,000", "+6.83%"],
+              ["Stop-loss", "91,500", "−5.1%"],
+              ["Take-profit", "103,000", "+6.8%"],
             ].map(([k, v, d]) => (
               <div key={k} className="flex items-center gap-3 rounded-xl border border-line px-3 h-10 font-mono text-[12.5px]">
-                <span className={k === "SL" ? "text-accent-text" : "text-soft"}>{k}</span>
+                <span className={cx("font-sans w-[74px]", k === "Stop-loss" ? "text-accent-text" : "text-soft")}>{k}</span>
                 <span>{v}</span>
                 <span className="text-muted">{d}</span>
-                <span className="ml-auto text-[10.5px] h-5 px-2 rounded-full border border-accent/40 text-accent-text inline-flex items-center font-sans">sealed</span>
+                <span className="ml-auto text-[10.5px] h-5 px-2 rounded-full border border-accent/40 text-accent-text inline-flex items-center font-sans">hidden</span>
               </div>
             ))}
             <div className="mt-1 flex items-center justify-between rounded-xl bg-panel-2 px-3 h-10 text-[12px]">
-              <span className="text-muted">Public orders on Hyperliquid&rsquo;s book</span>
+              <span className="text-muted">Orders anyone can see</span>
               <span className="font-mono text-good">0</span>
             </div>
             <div className="h-10 rounded-full bg-accent text-accent-ink grid place-items-center text-[12px] font-semibold uppercase tracking-[0.05em]">
-              Seal to the enclave
+              Set hidden stop
             </div>
           </div>
         </div>

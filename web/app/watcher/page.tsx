@@ -1,103 +1,103 @@
 "use client";
 
-import { Code, ExternalLink, Mono, Notice, Panel, Pill, Stat } from "@/components/ui";
+import { Code, cx, Details, ExternalLink, Mono, Stat } from "@/components/ui";
+import { useWatcherState } from "@/components/WatcherPill";
 import { CONTRACT, EXPLORER, KEEPER_URL, NEAR_NETWORK, OUTLAYER_API, OUTLAYER_PROJECT } from "@/lib/config";
-import { ago } from "@/lib/format";
-import { useEnclaveKeys, useHeartbeat, useNow, usePoll } from "@/lib/hooks";
+import { useEnclaveKeys, usePoll } from "@/lib/hooks";
 import { views } from "@/lib/near";
 
 interface KeeperHealth {
   ok: boolean;
-  last_ok_tick_at: number | null;
-  last_error: string | null;
   last_call_id: string | null;
   last_attestation: string | null;
   outlayer_latency_ms: number | null;
-  enclave_compute_ms: number | null;
   tick_interval_ms: number;
-  block_height: number | null;
 }
 
-export default function WatcherPage() {
+const HEADLINE = {
+  live: { title: "Protection is on", text: "Blindstop is watching prices and will close positions the moment a stop is reached.", tone: "text-good", dot: "bg-good" },
+  slow: { title: "Running slower than usual", text: "Checks are still happening, just less often than normal. Stops will still trigger, a little later.", tone: "text-warn", dot: "bg-warn" },
+  offline: {
+    title: "Protection is paused",
+    text: "Blindstop hasn't checked prices recently, so stops won't trigger until it's back. If you added a safety net, it still protects you from liquidation.",
+    tone: "text-bad",
+    dot: "bg-bad",
+  },
+  unknown: { title: "Checking…", text: "Looking up the latest status.", tone: "text-muted", dot: "bg-faint" },
+};
+
+export default function StatusPage() {
+  const w = useWatcherState();
   const keys = useEnclaveKeys();
-  const hb = useHeartbeat();
   const active = usePoll<number>("active", () => views.getActiveCount(), 5000);
-  const keeper = usePoll<KeeperHealth>(KEEPER_URL ? "keeper" : null, async () => {
-    const r = await fetch(`${KEEPER_URL}/health`);
-    return (await r.json()) as KeeperHealth;
-  }, 5000);
-  const now = useNow(1000);
-  const t = hb.data ? Number(hb.data.tick_ms) : null;
-  const age = t ? now - t : null;
-  const tone = age === null ? "neutral" : age < 15_000 ? "good" : age < 60_000 ? "warn" : "bad";
+  const keeper = usePoll<KeeperHealth>(KEEPER_URL ? "keeper" : null, async () => (await fetch(`${KEEPER_URL}/health`)).json(), 5000);
+  const h = HEADLINE[w.state];
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 grid grid-cols-1 gap-6">
+    <div className="mx-auto max-w-4xl px-4 py-8 grid grid-cols-1 gap-6">
       <div>
-        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">The watcher</h1>
-        <p className="text-sm text-muted mt-1 max-w-2xl">
-          An OutLayer project running in an Intel TDX enclave. It signs every report with a key the contract pins; this page reads
-          everything from NEAR and the keeper, so you can check it without trusting this site.
-        </p>
+        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">Status</h1>
+        <p className="text-sm text-muted mt-1">Is Blindstop protecting stops right now? This page checks for you, live.</p>
       </div>
 
-      <div className="grid sm:grid-cols-4 gap-4 card p-4 sm:p-5">
-        <Stat label="Last heartbeat" value={<Pill tone={tone} dot>{t ? ago(t, now) : hb.error ? "unreachable" : "none yet"}</Pill>} sub="signed by the enclave, recorded on NEAR" />
-        <Stat label="Active sealed orders" value={active.data ?? "…"} />
-        <Stat label="Orders seen at last heartbeat" value={hb.data?.orders_seen ?? "—"} />
-        <Stat label="Key epoch" value={keys.data?.key_epoch ?? "…"} sub="bumps on every key rotation" />
-      </div>
+      <section className={cx("card p-6 sm:p-8 grid gap-6", w.state === "live" && "lime-glow")}>
+        <div className="flex items-start gap-4">
+          <span className="relative mt-2 flex size-3.5 shrink-0">
+            {w.state === "live" && <span className={cx("absolute inset-0 rounded-full pulse", h.dot)} />}
+            <span className={cx("relative size-3.5 rounded-full", h.dot)} />
+          </span>
+          <div>
+            <h2 className={cx("text-2xl font-light tracking-tight", h.tone)}>{h.title}</h2>
+            <p className="mt-1.5 text-sm text-soft max-w-xl">{h.text}</p>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-5 border-t border-line pt-5">
+          <Stat label="Last price check" value={w.lastCheck ?? "—"} />
+          <Stat label="Stops being protected" value={active.data ?? "…"} />
+          <Stat label="Checks the price every" value={keeper.data ? `${keeper.data.tick_interval_ms / 1000} seconds` : "few seconds"} />
+        </div>
+      </section>
 
-      <Panel title="Keys pinned in the contract" aside={<ExternalLink href={`${EXPLORER}/address/${CONTRACT}`}>{CONTRACT}</ExternalLink>}>
-        <dl className="grid sm:grid-cols-[13rem_1fr] gap-x-4 gap-y-3 text-sm">
-          <dt className="text-muted">Sealing key (x25519)</dt>
-          <dd><Mono>{keys.data?.enclave_x25519 ?? "…"}</Mono><div className="text-xs text-muted">your browser encrypts stops to this</div></dd>
-          <dt className="text-muted">Report key (ed25519)</dt>
-          <dd><Mono>{keys.data?.enclave_ed25519 ?? "…"}</Mono><div className="text-xs text-muted">record_fire and heartbeat must verify against it</div></dd>
-          <dt className="text-muted">Hyperliquid agent</dt>
-          <dd><Mono>{keys.data?.agent_address ?? "…"}</Mono><div className="text-xs text-muted">secp256k1 key held by the TEE host; one agent for all users</div></dd>
+      <section className="card p-6 sm:p-8 grid gap-3">
+        <h2 className="text-lg font-light tracking-tight">Why you can trust this</h2>
+        <ul className="grid gap-2 text-[13.5px] text-soft list-disc pl-5">
+          <li>The watcher runs inside a sealed computer (a secure enclave) that not even the people running it can look into.</li>
+          <li>Every check it makes is signed and recorded on the NEAR blockchain, so the status above can&rsquo;t be faked by this website.</li>
+          <li>It can only close positions. It has no way to withdraw or send anyone&rsquo;s money.</li>
+        </ul>
+      </section>
+
+      <Details>
+        <dl className="grid sm:grid-cols-[11rem_1fr] gap-x-4 gap-y-2.5">
+          <dt className="text-muted">Contract</dt>
+          <dd>
+            <ExternalLink href={`${EXPLORER}/address/${CONTRACT}`}>{CONTRACT}</ExternalLink> ({NEAR_NETWORK})
+          </dd>
           <dt className="text-muted">OutLayer project</dt>
           <dd><Mono>{OUTLAYER_PROJECT}</Mono></dd>
-        </dl>
-      </Panel>
-
-      {KEEPER_URL && (
-        <Panel title="Keeper" aside={keeper.data ? <Pill tone={keeper.data.ok ? "good" : "bad"} dot>{keeper.data.ok ? "healthy" : "unhealthy"}</Pill> : null}>
-          {keeper.error ? (
-            <Notice tone="bad">The keeper is unreachable: {keeper.error}. Stops do not fire while no keeper runs; anyone can start one (see the README).</Notice>
-          ) : (
-            <div className="grid sm:grid-cols-4 gap-4">
-              <Stat label="Tick interval" value={keeper.data ? `${keeper.data.tick_interval_ms / 1000}s` : "…"} />
-              <Stat label="Round trip" value={keeper.data?.outlayer_latency_ms ? `${keeper.data.outlayer_latency_ms} ms` : "—"} />
-              <Stat label="TEE compute" value={keeper.data?.enclave_compute_ms ? `${keeper.data.enclave_compute_ms} ms` : "—"} />
-              <Stat label="NEAR block read" value={keeper.data?.block_height ?? "—"} />
-              {keeper.data?.last_attestation && (
-                <div className="sm:col-span-4 text-sm">
-                  Attestation of the last run: <ExternalLink href={keeper.data.last_attestation}>{keeper.data.last_call_id}</ExternalLink>
-                </div>
-              )}
-              {keeper.data?.last_error && <div className="sm:col-span-4"><Notice tone="warn">Last error: {keeper.data.last_error}</Notice></div>}
-            </div>
+          <dt className="text-muted">Sealing key (x25519)</dt>
+          <dd><Mono>{keys.data?.enclave_x25519 ?? "…"}</Mono></dd>
+          <dt className="text-muted">Report key (ed25519)</dt>
+          <dd><Mono>{keys.data?.enclave_ed25519 ?? "…"}</Mono></dd>
+          <dt className="text-muted">Hyperliquid agent</dt>
+          <dd><Mono>{keys.data?.agent_address ?? "…"}</Mono></dd>
+          {keeper.data?.last_attestation && (
+            <>
+              <dt className="text-muted">Latest attestation</dt>
+              <dd><ExternalLink href={keeper.data.last_attestation}>{keeper.data.last_call_id}</ExternalLink></dd>
+            </>
           )}
-        </Panel>
-      )}
-
-      <Panel title="Check it yourself">
-        <div className="grid gap-3 text-sm">
-          <p className="text-soft">The keys above are what the contract trusts. Ask the contract directly:</p>
-          <Code>{`near contract call-function as-read-only ${CONTRACT} get_enclave_keys json-args {} network-config ${NEAR_NETWORK} now`}</Code>
-          <p className="text-soft">
-            Every enclave run has a TDX attestation that names the exact wasm sha256 it ran. Fetch one by call id (the keeper exposes the
-            last one) and compare the hash with the release build:
-          </p>
-          <Code>{`curl ${OUTLAYER_API}/attestations/by-call/<call_id>
-cd enclave/room && BLINDSTOP_CONTRACT=${CONTRACT} cargo build --release --target wasm32-wasip2
-shasum -a 256 target/wasm32-wasip2/release/blindstop-room.wasm`}</Code>
-          <p className="text-soft">
-            The enclave answers <Mono>{`{"op":"pubkeys"}`}</Mono> with the same three keys on every run (see <Mono>docs/spikes.md</Mono>, S3).
-          </p>
-        </div>
-      </Panel>
+          {keeper.data?.outlayer_latency_ms && (
+            <>
+              <dt className="text-muted">Round trip</dt>
+              <dd>{keeper.data.outlayer_latency_ms} ms</dd>
+            </>
+          )}
+        </dl>
+        <p>Check the keys yourself, and compare the attested build with the source:</p>
+        <Code>{`near contract call-function as-read-only ${CONTRACT} get_enclave_keys json-args {} network-config ${NEAR_NETWORK} now
+curl ${OUTLAYER_API}/attestations/by-call/<call_id>`}</Code>
+      </Details>
     </div>
   );
 }

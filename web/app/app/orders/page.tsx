@@ -3,34 +3,30 @@
 import Link from "next/link";
 import { useState } from "react";
 import { REVEAL_DEPOSIT_YOCTO, type OrderView } from "@blindstop/shared";
-import { Button, cx, Mono, Notice, Pill } from "@/components/ui";
-import { EXPLORER } from "@/lib/config";
-import { dateTime, nsToDate, px, short } from "@/lib/format";
+import { Button, cx, Notice, Pill } from "@/components/ui";
+import { friendly } from "@/lib/errors";
+import { nsToDate, px } from "@/lib/format";
 import { useMyOrders } from "@/lib/hooks";
 import { useLocalOrders } from "@/lib/local-orders";
 import { useNear } from "@/lib/near";
 import { useTrading } from "@/lib/trading";
 import type { LocalOrder } from "@/lib/vault";
 
-const TONE: Record<OrderView["status"], "accent" | "good" | "neutral" | "warn" | "bad"> = {
-  Active: "accent",
-  Fired: "good",
-  Cancelled: "neutral",
-  Skipped: "neutral",
-  Rejected: "warn",
-  Invalid: "bad",
+const STATUS: Record<OrderView["status"], { label: string; tone: "accent" | "good" | "neutral" | "warn" | "bad"; meaning: string }> = {
+  Active: { label: "Protecting", tone: "accent", meaning: "Hidden and being watched right now." },
+  Fired: { label: "Triggered", tone: "good", meaning: "The price reached your level and your trade was closed." },
+  Cancelled: { label: "Cancelled", tone: "neutral", meaning: "You cancelled this stop." },
+  Skipped: { label: "Nothing to close", tone: "neutral", meaning: "The price was reached, but the trade was already closed." },
+  Rejected: { label: "Couldn't close", tone: "warn", meaning: "Hyperliquid wouldn't fill the close at your price limit, even after 5 tries." },
+  Invalid: { label: "Couldn't be read", tone: "bad", meaning: "Blindstop couldn't open this stop, so it was switched off." },
 };
 
-const MEANING: Record<OrderView["status"], string> = {
-  Active: "sealed, watched every tick",
-  Fired: "closed on Hyperliquid",
-  Cancelled: "cancelled by you",
-  Skipped: "triggered with no position left to close",
-  Rejected: "Hyperliquid refused the close on every attempt",
-  Invalid: "the enclave could not open it",
-};
+function when(d: Date | null): string {
+  if (!d) return "—";
+  return d.toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
 
-export default function OrdersPage() {
+export default function HistoryPage() {
   const near = useNear();
   const t = useTrading();
   const chain = useMyOrders(near.accountId);
@@ -46,7 +42,7 @@ export default function OrdersPage() {
       setMsg({ tone: "good", text: ok });
       chain.reload();
     } catch (e) {
-      setMsg({ tone: "bad", text: (e as Error).message });
+      setMsg({ tone: "bad", text: friendly(e) });
     } finally {
       setBusy(null);
     }
@@ -54,10 +50,12 @@ export default function OrdersPage() {
 
   if (!near.accountId) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <Notice title="Connect a NEAR account">
-          Your orders are listed by the NEAR account that placed them. <Button variant="ghost" onClick={near.connect}>Connect</Button>
-        </Notice>
+      <div className="mx-auto max-w-4xl px-4 py-10 grid gap-4">
+        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em]">History</h1>
+        <div className="card p-6 grid gap-3 justify-items-start">
+          <p className="text-sm text-soft">Sign in to see your hidden stops and what happened to them.</p>
+          <Button variant="primary" onClick={near.connect}>Sign in</Button>
+        </div>
       </div>
     );
   }
@@ -66,139 +64,99 @@ export default function OrdersPage() {
   const rows = chain.data ?? [];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 grid gap-5">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">Orders</h1>
-          <p className="text-sm text-muted mt-1">
-            Placed by <span className="font-mono">{near.accountId}</span>. Levels appear only where this browser holds the plaintext
-            {t.status !== "unlocked" && <> — unlock your trading wallet on <Link className="underline" href="/app">App</Link> to see them</>}.
-          </p>
-        </div>
+    <div className="mx-auto max-w-4xl px-4 py-8 grid grid-cols-1 gap-5">
+      <div>
+        <h1 className="text-[30px] sm:text-[38px] font-light tracking-[-0.03em] leading-tight">History</h1>
+        <p className="text-sm text-muted mt-1">
+          Every stop you&rsquo;ve set, and what happened to it.
+          {t.status !== "unlocked" && (
+            <>
+              {" "}
+              <Link className="underline underline-offset-2" href="/app">Unlock your wallet</Link> to see the prices.
+            </>
+          )}
+        </p>
       </div>
       {msg && <Notice tone={msg.tone}>{msg.text}</Notice>}
-      {chain.error && <Notice tone="bad">NEAR RPC: {chain.error}</Notice>}
+      {chain.error && <Notice tone="bad">We couldn&rsquo;t load your history right now. Try again in a moment.</Notice>}
 
-      <div className="card overflow-x-auto">
-        <table className="w-full text-sm min-w-[760px]">
-          <thead>
-            <tr className="text-left text-[11px] uppercase tracking-[0.08em] text-muted border-b border-line">
-              <th className="font-medium px-4 h-10">#</th>
-              <th className="font-medium px-3">Order</th>
-              <th className="font-medium px-3">Status</th>
-              <th className="font-medium px-3">Set (block time)</th>
-              <th className="font-medium px-3">Result</th>
-              <th className="font-medium px-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-muted">
-                  {chain.loading ? "Loading…" : "No orders yet."}
-                </td>
-              </tr>
-            )}
-            {rows.map((o) => {
-              const l = byCommit.get(o.commitment);
-              return (
-                <tr key={o.id} className="border-b border-line last:border-0 align-top">
-                  <td className="px-4 py-3 font-mono">{o.id}</td>
-                  <td className="px-3 py-3">
-                    <OrderCell o={o} l={l} />
-                  </td>
-                  <td className="px-3 py-3">
-                    <Pill tone={TONE[o.status]} dot>
-                      {o.status}
-                    </Pill>
-                    <div className="text-xs text-muted mt-1">{MEANING[o.status]}</div>
-                  </td>
-                  <td className="px-3 py-3 font-mono text-xs tabular">
-                    {dateTime(nsToDate(o.created_ns))}
-                    <div className="text-muted">block {o.created_height}</div>
-                  </td>
-                  <td className="px-3 py-3 font-mono text-xs tabular">
-                    {o.fire && o.status === "Fired" ? (
-                      <>
-                        {o.fire.filled_sz} @ {px(o.fire.avg_px)}
-                        <div className="text-muted">oid {o.fire.hl_oid}</div>
-                      </>
-                    ) : o.closed_ns ? (
-                      <span className="text-muted">{dateTime(nsToDate(o.closed_ns))}</span>
-                    ) : (
-                      <span className="text-muted">—</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      {o.status === "Active" && (
-                        <Button
-                          variant="danger"
-                          className="h-8 px-3 text-xs"
-                          busy={busy === o.id}
-                          onClick={() => act(o.id, () => near.call("cancel_order", { order_id: o.id }), `Order ${o.id} cancelled.`)}
-                        >
-                          Cancel
-                        </Button>
-                      )}
-                      {o.status !== "Active" && !o.revealed && l && (
-                        <Button
-                          className="h-8 px-3 text-xs"
-                          busy={busy === o.id}
-                          onClick={() =>
-                            act(o.id, () => near.call("reveal", { order_id: o.id, plaintext: l.plaintext }, REVEAL_DEPOSIT_YOCTO), `Order ${o.id} revealed on NEAR.`)
-                          }
-                        >
-                          Reveal
-                        </Button>
-                      )}
-                      <Link href={`/verify?id=${o.id}`} className="inline-flex items-center h-8 px-3 text-xs rounded-full border border-line-strong hover:border-fg/40">
-                        Proof
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {rows.length === 0 && !chain.loading && (
+        <div className="card p-8 text-center text-sm text-muted">
+          No stops yet. <Link href="/app" className="underline underline-offset-2">Set your first hidden stop</Link>.
+        </div>
+      )}
+      {chain.loading && <div className="card p-8 text-center text-sm text-muted">Loading…</div>}
+
+      <ul className="grid gap-3">
+        {rows.map((o) => {
+          const l = byCommit.get(o.commitment);
+          const st = STATUS[o.status];
+          return (
+            <li key={o.id} className="card p-5 grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
+              <div className="min-w-0 grid gap-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Title o={o} l={l} />
+                  <Pill tone={st.tone} dot>
+                    {st.label}
+                  </Pill>
+                </div>
+                <p className="text-[13px] text-muted">{st.meaning}</p>
+                <p className="text-xs text-faint">
+                  Set {when(nsToDate(o.created_ns))}
+                  {o.status === "Fired" && o.fire && ` · closed ${o.fire.filled_sz} at $${px(o.fire.avg_px)}`}
+                  {o.status !== "Fired" && o.closed_ns && ` · ended ${when(nsToDate(o.closed_ns))}`}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 sm:justify-end">
+                {o.status === "Active" && (
+                  <Button
+                    variant="danger"
+                    className="h-9"
+                    busy={busy === o.id}
+                    onClick={() => act(o.id, () => near.call("cancel_order", { order_id: o.id }), "Stop cancelled.")}
+                  >
+                    Cancel stop
+                  </Button>
+                )}
+                {o.status !== "Active" && !o.revealed && l && (
+                  <Button
+                    className="h-9"
+                    busy={busy === o.id}
+                    title="Publish this stop's price so anyone can check it was set before the market moved"
+                    onClick={() =>
+                      act(o.id, () => near.call("reveal", { order_id: o.id, plaintext: l.plaintext }, REVEAL_DEPOSIT_YOCTO), "Proof published. Anyone can now check this stop.")
+                    }
+                  >
+                    Publish proof
+                  </Button>
+                )}
+                {o.status !== "Active" && (
+                  <Link href={`/verify?id=${o.id}`} className="inline-flex items-center h-9 px-4 text-[13px] rounded-full border border-line-strong hover:border-accent/50">
+                    View proof
+                  </Link>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
       <p className="text-xs text-muted">
-        Revealing publishes the order&rsquo;s plaintext on NEAR so anyone can check, on <Link className="underline" href="/verify">Verify</Link>,
-        that the level was committed before the price moved. Only closed orders can be revealed. Contract events:{" "}
-        <a className="underline" href={`${EXPLORER}/address/${near.accountId}`} target="_blank" rel="noreferrer">
-          {short(near.accountId, 14, 8)}
-        </a>
-        .
+        &ldquo;Publish proof&rdquo; makes a finished stop&rsquo;s price public, so anyone can check it was set before the market moved. Stops
+        that are still protecting you stay private.
       </p>
     </div>
   );
 }
 
-function OrderCell({ o, l }: { o: OrderView; l: LocalOrder | undefined }) {
+function Title({ o, l }: { o: OrderView; l: LocalOrder | undefined }) {
   const r = o.revealed_order;
-  if (l || r) {
-    const coin = l?.coin ?? r!.coin;
-    const kind = (l?.kind ?? r!.kind) === "stop_loss" ? "SL" : "TP";
-    const side = l?.side ?? r!.position_side;
-    const level = l?.triggerPx ?? r!.trigger_px;
-    const size = l?.size ?? r!.size;
-    return (
-      <div>
-        <div className="font-mono">
-          <span className={cx(kind === "SL" ? "text-accent-text" : "")}>{kind}</span> {coin} {side} @ {px(level)}
-        </div>
-        <div className="text-xs text-muted">
-          {size === "ALL" ? "full position" : `size ${size}`}
-          {r && " · revealed"}
-        </div>
-      </div>
-    );
-  }
+  if (!l && !r) return <span className="text-[15px] font-medium">Hidden stop #{o.id}</span>;
+  const coin = l?.coin ?? r!.coin;
+  const isSl = (l?.kind ?? r!.kind) === "stop_loss";
+  const level = l?.triggerPx ?? r!.trigger_px;
   return (
-    <div>
-      <div className="text-muted">sealed</div>
-      <Mono className="text-xs text-faint">{short(o.commitment, 10, 6)}</Mono>
-    </div>
+    <span className="text-[15px] font-medium">
+      <span className={cx(isSl && "text-accent-text")}>{isSl ? "Stop-loss" : "Take-profit"}</span> · {coin} at ${px(level)}
+    </span>
   );
 }

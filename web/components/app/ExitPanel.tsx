@@ -1,5 +1,6 @@
 "use client";
 
+import { friendly } from "@/lib/errors";
 import { useState } from "react";
 import { normalizeDecimalInput, parseDec, withdraw } from "@blindstop/shared";
 import { HL_NETWORK } from "@/lib/config";
@@ -20,25 +21,24 @@ export function ExitPanel() {
     setMsg(null);
     try {
       const a = normalizeDecimalInput(amount);
-      if (ch.data && parseDec(a) > parseDec(Number(ch.data.withdrawable).toFixed(6))) throw new Error("more than is withdrawable");
+      if (ch.data && parseDec(a) > parseDec(Number(ch.data.withdrawable).toFixed(6))) throw new Error("That\u2019s more than you can withdraw right now.");
       setBusy(true);
       await withdraw(t.account, t.account.address, a, HL_NETWORK);
-      setMsg({ tone: "good", text: `Withdrawal of $${a} requested to ${t.account.address} on Arbitrum. Hyperliquid charges a $1 fee and settles in a few minutes.` });
+      setMsg({ tone: "good", text: `Your $${a} is on its way back to your trading wallet. It usually arrives within a few minutes (Hyperliquid charges a $1 fee).` });
       setAmount("");
     } catch (e) {
-      setMsg({ tone: "bad", text: (e as Error).message });
+      setMsg({ tone: "bad", text: friendly(e) });
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <Panel title="Exit" aside={`withdrawable ${usd(ch.data?.withdrawable)}`}>
+    <Panel title="Withdraw" aside={`${usd(ch.data?.withdrawable)} available`}>
       <div className="grid gap-3 max-w-xl">
         <p className="text-sm text-soft">
-          Withdraw from Hyperliquid back to this trading wallet on Arbitrum, signed by its own key (the watcher cannot do this). To make the
-          exit private, deposit from there into <ExternalLink href="https://gloam.trade">Gloam</ExternalLink> with &ldquo;deposit from another
-          chain&rdquo;; the wallet needs a little ETH on Arbitrum for that transaction.
+          Take money out of Hyperliquid back to your trading wallet. Only you can do this; Blindstop can&rsquo;t. Want it private? Move it
+          into <ExternalLink href="https://gloam.trade">Gloam</ExternalLink> afterwards.
         </p>
         <form
           className="flex gap-2 items-end"
@@ -48,7 +48,7 @@ export function ExitPanel() {
           }}
         >
           <label className="flex-1">
-            <Label>USDC</Label>
+            <Label>Amount (USDC)</Label>
             <Input mono inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
           </label>
           <Button type="submit" busy={busy} disabled={!amount || !t.account}>Withdraw</Button>
