@@ -1893,6 +1893,6 @@ html .nws-modal-wrapper .nws-modal {
 html .nws-modal-wrapper .nws-modal a {
   color: var(--accent-text);
 }
-html .nws-modal-wrapper .nws-modal p.button {
+html .nws-modal-wrapper .nws-modal .modal-right .info .button {
   color: var(--accent-text);
 }
