@@ -1,0 +1,86 @@
+[
+ {
+  "n": 1,
+  "name": "The note",
+  "duration": 7.622,
+  "words": []
+ },
+ {
+  "n": 2,
+  "name": "The crowd",
+  "duration": 24.05,
+  "words": []
+ },
+ {
+  "n": 3,
+  "name": "The envelope",
+  "duration": 10.825,
+  "words": []
+ },
+ {
+  "n": 4,
+  "name": "Sign in and set up",
+  "duration": 8.787,
+  "words": []
+ },
+ {
+  "n": 5,
+  "name": "Open a trade",
+  "duration": 9.937,
+  "words": []
+ },
+ {
+  "n": 6,
+  "name": "Hide the stop",
+  "duration": 18.267,
+  "words": []
+ },
+ {
+  "n": 7,
+  "name": "Nothing to see",
+  "duration": 6.307,
+  "words": []
+ },
+ {
+  "n": 8,
+  "name": "Watching",
+  "duration": 20.508,
+  "words": []
+ },
+ {
+  "n": 9,
+  "name": "It fires",
+  "duration": 22.112,
+  "words": []
+ },
+ {
+  "n": 10,
+  "name": "Safety net",
+  "duration": 11.133,
+  "words": []
+ },
+ {
+  "n": 11,
+  "name": "Proof",
+  "duration": 7.717,
+  "words": []
+ },
+ {
+  "n": 12,
+  "name": "It holds up",
+  "duration": 15.483,
+  "words": []
+ },
+ {
+  "n": 13,
+  "name": "Claim",
+  "duration": 3.896,
+  "words": []
+ },
+ {
+  "n": 14,
+  "name": "End card",
+  "duration": 3.171,
+  "words": []
+ }
+]

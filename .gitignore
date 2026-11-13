@@ -42,3 +42,11 @@ coverage/
 .vscode/*
 !.vscode/extensions.json
 *.swp
+
+# ── video project: caches, renders, licensed music ──
+video/film/.hyperframes/
+video/film/.media/
+video/film/.thumbnails/
+video/film/.waveform-cache/
+video/film/renders/
+video/film/assets/music/*.wav

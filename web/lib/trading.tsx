@@ -6,7 +6,7 @@ import * as vault from "./vault";
 
 type Status = "loading" | "none" | "locked" | "unlocked";
 
-interface TradingCtx {
+export interface TradingCtx {
   status: Status;
   address: `0x${string}` | null;
   account: PrivateKeyAccount | null;
@@ -19,7 +19,8 @@ interface TradingCtx {
   refresh: () => Promise<void>;
 }
 
-const Ctx = createContext<TradingCtx | null>(null);
+export const TradingContext = createContext<TradingCtx | null>(null);
+const Ctx = TradingContext;
 
 export function TradingProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<Status>("loading");

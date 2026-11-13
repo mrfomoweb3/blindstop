@@ -1,0 +1,41 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+
+.grid12 { position: absolute; left: 120px; top: 240px; width: 1680px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 40px; }
+.ar { display: flex; justify-content: space-between; align-items: center; padding: 18px 26px; border-radius: 16px; border: 1px solid #2b2e29; background: #121411; font-size: 30px; }
+.ref { font-family: "Geist Mono", monospace; font-size: 28px; color: #0a0b08; background: #7fdc6a; padding: 4px 12px; border-radius: 8px; }
+</style>
+  <div id="root" data-composition-id="s12" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s12-cap" class="line" style="left:120px;top:90px;font-size:64px"><span class="w ">We</span> <span class="w ">attacked</span> <span class="w ">it</span> <span class="w ">ourselves.</span></div>
+    <div class="tag" style="right:120px;top:104px;color:#7fdc6a;border-color:rgba(127,220,106,.4)">Real · run against testnet</div>
+    <div class="grid12"><div class="ar" id="s12-r0"><span class="an">Forged receipt</span><span class="ref">refused</span></div><div class="ar" id="s12-r1"><span class="an">Receipt for the wrong order</span><span class="ref">refused</span></div><div class="ar" id="s12-r2"><span class="an">Replayed receipt</span><span class="ref">refused</span></div><div class="ar" id="s12-r3"><span class="an">Keeper feeding fake prices</span><span class="ref">refused</span></div><div class="ar" id="s12-r4"><span class="an">NEAR sources disagree</span><span class="ref">refused</span></div><div class="ar" id="s12-r5"><span class="an">Someone else’s envelope, replayed</span><span class="ref">refused</span></div><div class="ar" id="s12-r6"><span class="an">Order naming another person’s wallet</span><span class="ref">refused</span></div><div class="ar" id="s12-r7"><span class="an">Cancelling someone else’s stop</span><span class="ref">refused</span></div><div class="ar" id="s12-r8"><span class="an">Revealing with the wrong contents</span><span class="ref">refused</span></div></div>
+    <div id="s12-only" class="line" style="left:120px;top:900px;font-size:52px"><span class="w ">It</span> <span class="w ">can</span> <span class="w ">only</span> <span class="w ">close</span> <span class="w ">positions.</span> <span class="w ">It</span> <span class="w ">can’t</span> <span class="w ">move</span> <span class="w ">your</span> <span class="w ">money.</span></div>
+  </div>
+  <script>
+    const D = 16.38;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    wordsIn("#s12-cap .w", 0.2);
+    tl.fromTo(".ar", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.32, ease: "expo.out" }, 1.59);
+    tl.fromTo(".ref", { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 0.25, stagger: 0.32, ease: "back.out(1.4)" }, 1.84);
+    wordsIn("#s12-only .w", 9.95);
+
+    window.__timelines["s12"] = tl;
+  </script>
+</template>

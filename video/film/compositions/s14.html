@@ -1,0 +1,41 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+
+.logo { position: absolute; left: 0; right: 0; top: 380px; display: flex; justify-content: center; align-items: center; gap: 30px; font-size: 110px; letter-spacing: -0.04em; }
+.mark { width: 130px; height: 130px; border-radius: 32px; background: #c6f432; display: grid; place-items: center; }
+.end { position: absolute; left: 0; right: 0; text-align: center; font-size: 40px; font-weight: 300; color: #858980; }
+</style>
+  <div id="root" data-composition-id="s14" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s14-logo" class="logo"><div class="mark"><svg viewBox="0 0 24 24" width="76" height="76"><path d="M4 12h16M9 12v6" stroke="#0a0b08" stroke-width="2.6" stroke-linecap="round"/></svg></div><span>Blindstop</span></div>
+    <div id="s14-l1" class="end" style="top:600px">Hidden stop-losses for Hyperliquid, built on NEAR.</div>
+    <div id="s14-l2" class="end mono" style="top:680px;color:#c6f432;font-size:34px">github.com/mrfomoweb3/blindstop</div>
+    <div id="s14-l3" class="end" style="top:760px;font-size:30px">Open source · MIT · try it on testnet</div>
+  </div>
+  <script>
+    const D = 6.72;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    tl.fromTo("#s14-logo", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 0.2);
+    tl.fromTo("#s14-l1", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.8);
+    tl.fromTo("#s14-l2", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.4);
+    tl.fromTo("#s14-l3", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.0);
+
+    window.__timelines["s14"] = tl;
+  </script>
+</template>

@@ -1,0 +1,47 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+.note-ok { position: absolute; font-size: 28px; color: #7fdc6a; padding: 14px 22px; border-radius: 14px; background: rgba(127,220,106,.08); border: 1px solid rgba(127,220,106,.3); }</style>
+  <div id="root" data-composition-id="s05" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s05-k" class="kicker" style="left:120px;top:96px">Open a trade</div>
+    <div id="s05-cap" class="line" style="left:120px;top:150px;font-size:64px;max-width:1700px"><span class="w ">Pick</span> <span class="w ">a</span> <span class="w ">coin,</span> <span class="w ">a</span> <span class="w ">direction,</span> <span class="w ">an</span> <span class="w ">amount</span> <span class="w ">and</span> <span class="w ">leverage.</span></div>
+    <div id="s05-shot" class="shot" style="left:160px;top:330px;width:1600px"><img src="assets/ui/trade-a.png" alt=""></div>
+    
+
+    <div id="s5-b" class="shot" style="left:160px;top:330px;width:1600px;opacity:0;border:none;box-shadow:none"><img src="assets/ui/trade-b.png" alt=""></div>
+    <svg id="s5-cur" class="cursor" viewBox="0 0 24 24" width="44" height="44" style="position:absolute;left:1500px;top:1000px" data-layout-ignore><path d="M3 2l7 19 2.5-8 8-2.5z" fill="#f1f2ee" stroke="#090a09" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <div id="s5-ok" class="note-ok" style="left:160px;top:930px">Opened a long of 0.0044 BTC. Now hide its stop-loss.</div>
+    <div class="tag" style="left:120px;top:1000px;opacity:.9">Sample numbers · testnet</div>
+  </div>
+  <script>
+    const D = 10.84;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    tl.fromTo("#s05-k", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.1);
+    wordsIn("#s05-cap .w", 0.4);
+    tl.fromTo("#s05-shot", { opacity: 0, y: 60, scale: 1.04 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+    
+
+    tl.fromTo("#s5-b", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 4.82);
+    tl.fromTo("#s5-cur", { x: 0, y: 0, opacity: 0 }, { x: -1180, y: -150, opacity: 1, duration: 0.9, ease: "power2.inOut" }, 6.51);
+    tl.to("#s5-cur", { scale: 0.85, duration: 0.08, yoyo: true, repeat: 1 }, 7.46);
+    tl.fromTo("#s5-ok", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 7.71);
+
+    window.__timelines["s05"] = tl;
+  </script>
+</template>

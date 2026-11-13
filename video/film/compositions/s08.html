@@ -1,0 +1,70 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+
+.box { position: absolute; border-radius: 26px; border: 1px solid #2b2e29; background: #121411; padding: 30px 34px; }
+.box .lbl { font-size: 34px; font-weight: 500; }
+.box .sm { font-size: 28px; color: #858980; margin-top: 10px; }
+.src { width: 400px; height: 180px; }
+.enc { left: 790px; top: 400px; width: 340px; height: 400px; padding: 0; display: grid; place-items: center; align-content: center; gap: 10px; text-align: center; background: #0c0d0b; border-color: #c6f432; }
+.enc .lbl { font-size: 30px; margin-top: 16px; } .enc .sm { font-size: 28px; padding: 0 14px; }
+.key { width: 36px; height: 60px; position: relative; } .key::before { content: ""; position: absolute; left: 0; top: 0; width: 36px; height: 36px; border-radius: 50%; background: #c6f432; } .key::after { content: ""; position: absolute; left: 12px; top: 26px; width: 12px; height: 34px; background: #c6f432; border-radius: 3px; }
+.agree { position: absolute; left: 140px; top: 572px; font-size: 28px; color: #7fdc6a; }
+.arrow { position: absolute; height: 3px; background: #2b2e29; transform-origin: 0 50%; }
+.arrow::after { content: ""; position: absolute; right: -2px; top: -8px; border-left: 16px solid #2b2e29; border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+.arrow.rev { transform-origin: 100% 50%; } .arrow.rev::after { right: auto; left: -2px; border-left: none; border-right: 16px solid #2b2e29; }
+.tickc { position: absolute; left: 790px; top: 830px; width: 340px; text-align: center; font-size: 28px; color: #c6f432; }
+</style>
+  <div id="root" data-composition-id="s08" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s8-cap" class="line" style="left:120px;top:90px;font-size:64px"><span class="w ">Who</span> <span class="w ">watches</span> <span class="w ">the</span> <span class="w ">price?</span></div>
+    <div id="s8-enc" class="box enc"><div class="key"></div><div class="lbl">Sealed computer</div><div class="sm">secure enclave · NEAR OutLayer</div></div>
+    <div id="s8-n1" class="box src" style="left:120px;top:380px"><div class="lbl">NEAR · source 1</div><div class="sm mono">block 277,529,492</div></div>
+    <div id="s8-n2" class="box src" style="left:120px;top:640px"><div class="lbl">NEAR · source 2</div><div class="sm mono">block 277,529,492</div></div>
+    <div id="s8-agree" class="agree">must agree ✓</div>
+    <div id="s8-hl" class="box src" style="left:1400px;top:510px"><div class="lbl">Hyperliquid price</div><div id="s8-px" class="sm mono" style="font-size:44px;color:#f1f2ee">$68,319</div></div>
+    <div id="s8-a1" class="arrow" style="left:520px;top:600px;width:330px"></div>
+    <div id="s8-a2" class="arrow rev" style="left:1070px;top:600px;width:330px"></div>
+    <div id="s8-tick" class="tickc mono">checks every 3 s</div>
+    <div id="s8-blind" class="kicker" style="left:120px;top:960px;color:#f1f2ee">Even the people running it can’t see inside.</div>
+    <div id="s8-live" class="shot" style="left:210px;top:300px;width:1500px;opacity:0"><img src="assets/ui/status-card.png" alt=""></div>
+    <div id="s8-livetag" class="tag" style="left:210px;top:220px;opacity:0;color:#7fdc6a;border-color:rgba(127,220,106,.4)">Real · the live Status page</div>
+  </div>
+  <script>
+    const D = 24.01;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    wordsIn("#s8-cap .w", 0.2);
+    tl.fromTo("#s8-enc", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }, 2.81);
+    tl.fromTo("#s8-n1", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 6.5);
+    tl.fromTo("#s8-n2", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 7.73);
+    tl.fromTo("#s8-agree", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 9.37);
+    tl.fromTo("#s8-a1", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 9.78);
+    tl.fromTo("#s8-hl", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 12.65);
+    tl.fromTo("#s8-a2", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 13.48);
+    tl.fromTo("#s8-tick", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 13.89);
+    tl.set("#s8-px", { textContent: "$68,302" }, 14.71);
+    tl.set("#s8-px", { textContent: "$68,288" }, 17.71);
+    tl.set("#s8-px", { textContent: "$68,296" }, 20.71);
+    tl.fromTo("#s8-blind", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25 }, 17.58);
+    tl.to(["#s8-enc", "#s8-n1", "#s8-n2", "#s8-agree", "#s8-hl", "#s8-a1", "#s8-a2", "#s8-tick"], { opacity: 0, filter: "blur(8px)", duration: 0.25 }, 20.46);
+    tl.fromTo("#s8-live", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 20.66);
+    tl.fromTo("#s8-livetag", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 20.86);
+
+    window.__timelines["s08"] = tl;
+  </script>
+</template>

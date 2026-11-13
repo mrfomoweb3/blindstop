@@ -1,0 +1,73 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+
+.chip { position: absolute; left: 0; top: 0; padding: 10px 18px; border-radius: 12px; background: #c6f432; color: #0a0b08; font-size: 34px; opacity: 0; }
+.env2 { position: absolute; left: 1280px; top: 380px; width: 420px; height: 270px; background: #efe5c9; border-radius: 10px; box-shadow: 0 30px 60px rgba(0,0,0,.45); opacity: 0; }
+.flap2 { position: absolute; left: 0; right: 0; top: 0; height: 160px; background: #e5d9b8; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 0; }
+.seal2 { position: absolute; left: 50%; top: 125px; width: 76px; height: 76px; margin-left: -38px; border-radius: 50%; background: #c6f432; box-shadow: 0 4px 0 #9bc21f; }
+.nearbox { position: absolute; left: 1100px; top: 330px; width: 700px; padding: 34px; border-radius: 28px; border: 1px solid #2b2e29; background: #121411; opacity: 0; }
+.hex { font-size: 28px; line-height: 1.5; color: #858980; word-break: break-all; height: 216px; overflow: hidden; }
+</style>
+  <div id="root" data-composition-id="s06" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s06-k" class="kicker" style="left:120px;top:96px">Hide the stop</div>
+    <div id="s06-cap" class="line" style="left:120px;top:150px;font-size:64px;max-width:1700px"><span class="w ">Type</span> <span class="w ">your</span> <span class="w ">levels.</span> <span class="w ">Press</span> <span class="w ">“Hide</span> <span class="w ">my</span> <span class="w ">stop”.</span></div>
+    <div id="s06-shot" class="shot" style="left:120px;top:250px;width:900px"><img src="assets/ui/pos-a.png" alt=""></div>
+    <div id="s06-tag" class="tag" style="right:120px;top:100px">Sample numbers · testnet</div>
+
+    <div id="s6-b" class="shot" style="left:120px;top:250px;width:900px;opacity:0;border:none;box-shadow:none"><img src="assets/ui/pos-b.png" alt=""></div>
+    <svg id="s6-cur" class="cursor" viewBox="0 0 24 24" width="44" height="44" style="position:absolute;left:700px;top:1000px" data-layout-ignore><path d="M3 2l7 19 2.5-8 8-2.5z" fill="#f1f2ee" stroke="#090a09" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <div id="s6-chips">
+      <div id="s6-c1" class="chip mono">66000</div>
+      <div id="s6-c2" class="chip mono">72000</div>
+    </div>
+    <div id="s6-env" class="env2"><div class="flap2"></div><div class="seal2"></div></div>
+    <div id="s6-lock" class="kicker" style="left:1180px;top:760px;color:#f1f2ee">Locked in your browser. Only the sealed computer can open it.</div>
+    <div id="s6-near" class="nearbox">
+      <div class="kicker" style="position:static;margin-bottom:16px">What NEAR stores</div>
+      <div class="mono hex" data-layout-ignore>9f 3a c1 07 e4 52 b8 1d 6e a0 f3 28 4c 91 d7 0b 35 ee 7a c4 19 86 2f d0 5b a9 63 0e f8 47 bc 12 9f 3a c1 07 e4 52 b8 1d 6e a0 f3 28 4c 91 d7 0b 35 ee 7a c4 19 86 2f d0 5b a9 63 0e f8 47 bc 12 9f 3a c1 07 e4 52 b8 1d 6e a0 f3 28 4c 91 d7 0b 35 ee 7a c4 19 86 2f d0 5b a9 63 0e f8 47 bc 12 </div>
+      <div class="kicker" style="position:static;margin-top:16px;color:#f1f2ee">316 bytes. Same size, whatever is inside.</div>
+    </div>
+  </div>
+  <script>
+    const D = 19.17;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    tl.fromTo("#s06-k", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.1);
+    wordsIn("#s06-cap .w", 0.4);
+    tl.fromTo("#s06-shot", { opacity: 0, y: 60, scale: 1.04 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+    tl.fromTo("#s06-tag", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.8);
+
+    tl.fromTo("#s6-b", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 1.81);
+    tl.fromTo("#s6-cur", { x: 0, y: 0, opacity: 0 }, { x: -480, y: -110, opacity: 1, duration: 0.8, ease: "power2.inOut" }, 4.38);
+    tl.to("#s6-cur", { scale: 0.85, duration: 0.08, yoyo: true, repeat: 1 }, 5.28);
+    tl.to("#s6-cur", { opacity: 0, duration: 0.2 }, 5.680000000000001);
+    tl.fromTo("#s6-c1", { x: 260, y: 650, opacity: 0 }, { opacity: 1, duration: 0.15 }, 5.430000000000001);
+    tl.fromTo("#s6-c2", { x: 700, y: 650, opacity: 0 }, { opacity: 1, duration: 0.15 }, 5.48);
+    tl.fromTo("#s6-env", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, 5.38);
+    tl.to("#s6-c1", { x: 1420, y: 470, scale: 0.6, duration: 0.7, ease: "power3.in" }, 5.78);
+    tl.to("#s6-c2", { x: 1440, y: 480, scale: 0.6, duration: 0.7, ease: "power3.in" }, 5.9);
+    tl.to("#s6-chips .chip", { opacity: 0, duration: 0.08 }, 6.58);
+    tl.fromTo("#s6-env .flap2", { scaleY: -1 }, { scaleY: 1, duration: 0.35, ease: "power3.out" }, 6.58);
+    tl.fromTo("#s6-lock", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25 }, 7.66);
+    tl.to(["#s6-env", "#s6-lock"], { opacity: 0, y: -40, duration: 0.3, ease: "power3.in" }, 13.15);
+    tl.fromTo("#s6-near", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 13.5);
+
+    window.__timelines["s06"] = tl;
+  </script>
+</template>

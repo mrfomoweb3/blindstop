@@ -1,0 +1,69 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+
+.chart { position: absolute; left: 120px; top: 160px; width: 1680px; height: 600px; }
+.lvl { position: absolute; left: 0; right: 0; height: 0; border-top: 3px dashed #c6f432; }
+.lvl span { position: absolute; right: 0; top: -46px; font-size: 30px; color: #c6f432; }
+.flow { position: absolute; left: 120px; top: 850px; display: flex; gap: 22px; align-items: center; font-size: 32px; }
+.fs { padding: 16px 24px; border-radius: 18px; border: 1px solid #2b2e29; background: #121411; }
+.fa { color: #858980; }
+.card9 { position: absolute; left: 120px; top: 240px; width: 1680px; padding: 44px; border-radius: 28px; border: 1px solid #2b2e29; background: #121411; }
+.term9 { margin-top: 26px; font-size: 28px; line-height: 1.7; color: #b9bdb4; }
+.term9 .hl:nth-child(n+5) { color: #7fdc6a; }
+</style>
+  <div id="root" data-composition-id="s09" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s9-chart" class="chart">
+      <div class="lvl" style="top:430px"><span class="mono">your hidden stop · 66,000</span></div>
+      <svg width="1680" height="600" data-layout-ignore viewBox="0 0 1680 600"><path id="s9-path" d="M0 160 C 200 140, 300 220, 460 200 S 760 260, 900 300 S 1150 380, 1260 440 L 1300 470" fill="none" stroke="#f1f2ee" stroke-width="4" stroke-dasharray="1700" stroke-dashoffset="1700"/></svg>
+    </div>
+    <div id="s9-steps" class="flow">
+      <div class="fs" id="s9-f1">Price crosses</div><div class="fa">→</div>
+      <div class="fs" id="s9-f2">Enclave closes the position</div><div class="fa">→</div>
+      <div class="fs" id="s9-f3">Signs a receipt</div><div class="fa">→</div>
+      <div class="fs lime" id="s9-f4">NEAR checks the signature ✓</div>
+    </div>
+    <div id="s9-real" class="card9">
+      <div class="tag" style="position:static;display:inline-block;color:#7fdc6a;border-color:rgba(127,220,106,.4)">Real · NEAR testnet</div>
+      <div style="font-size:40px;margin-top:22px">Order 6: sealed in a browser, opened by the real enclave, settled on NEAR.</div>
+      <div class="mono" style="font-size:28px;color:#858980;margin-top:16px">tx AjQgGT7C6aQmDTJCGKpYBnkU1FytQRR5HAj79WGTTDTH</div>
+    </div>
+    <div id="s9-sim" class="card9">
+      <div class="tag" style="position:static;display:inline-block;color:#f0b545;border-color:rgba(240,181,69,.45)">Simulation · the real enclave program, test exchange</div>
+      <div class="mono term9"><div class="hl" id="s9-h0">ok - long BTC stop at 70000 with mark 75191: no order sent; signed heartbeat</div><div class="hl" id="s9-h1">ok - mark 69999 crosses 70000: reduce-only IOC sell 0.01 @ 69299 signed by the agent; filled report verifies</div><div class="hl" id="s9-h2">ok - next tick re-emits the identical report and sends nothing</div><div class="hl" id="s9-h3">ok - after settlement the order is gone from get_active; nothing to do</div><div class="hl" id="s9-h4">14 scenarios against blindstop-room.wasm</div><div class="hl" id="s9-h5">HARNESS PASSED</div></div>
+    </div>
+  </div>
+  <script>
+    const D = 26.01;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    tl.to("#s9-path", { strokeDashoffset: 0, duration: 3.0, ease: "none" }, 0.2);
+    tl.fromTo("#s9-f1", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.56);
+    tl.fromTo("#s9-f2", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 4.11);
+    tl.fromTo("#s9-f3", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 5.66);
+    tl.fromTo("#s9-f4", { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.4)" }, 7.65);
+    tl.fromTo("#s9-steps .fa", { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.4 }, 3.0);
+    tl.to(["#s9-chart", "#s9-steps"], { opacity: 0, filter: "blur(8px)", duration: 0.25 }, 10.08);
+    tl.fromTo("#s9-real", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 10.52);
+    tl.to("#s9-real", { opacity: 0, filter: "blur(8px)", duration: 0.25 }, 16.27);
+    tl.fromTo("#s9-sim", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 16.71);
+    tl.fromTo("#s9-sim .hl", { opacity: 0 }, { opacity: 1, duration: 0.1, stagger: 0.45 }, 17.11);
+
+    window.__timelines["s09"] = tl;
+  </script>
+</template>

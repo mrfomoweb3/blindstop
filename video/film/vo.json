@@ -1,0 +1,72 @@
+[
+ {
+  "n": 1,
+  "name": "The note",
+  "text": "Imagine taping a note to your front door that says: \"If the price drops to sixty-six thousand, I'll sell everything.\""
+ },
+ {
+  "n": 2,
+  "name": "The crowd",
+  "text": "That's what a stop-loss looks like on Hyperliquid. Every order is public, so anyone can read your note. Tracking tools add up thousands of these notes and show exactly where the stops are bunched together. And when big traders can see a pile of stops, they push the price into it, set them all off, and buy back cheaper. It's called stop hunting, and the people it hurts are ordinary traders."
+ },
+ {
+  "n": 3,
+  "name": "The envelope",
+  "text": "Blindstop folds that note into a sealed envelope. Your stop-loss and take-profit never touch the public order book. Nobody can read them, not other traders, not us."
+ },
+ {
+  "n": 4,
+  "name": "Sign in and set up",
+  "text": "Here's how it works for you. Sign in with a NEAR wallet. Blindstop creates a separate trading wallet in your browser, and you add funds to it."
+ },
+ {
+  "n": 5,
+  "name": "Open a trade",
+  "text": "Open a trade right in the app. Pick a coin, long or short, an amount, and your leverage. Leverage is isolated, so you can't lose more than you put in."
+ },
+ {
+  "n": 6,
+  "name": "Hide the stop",
+  "text": "Now the important part. Type your stop-loss and take-profit, and press \"Hide my stop\". Your browser locks them in an envelope before anything leaves your computer. Only the sealed computer can open it. NEAR stores the envelope, which looks the same size whatever is inside."
+ },
+ {
+  "n": 7,
+  "name": "Nothing to see",
+  "text": "Now look at Hyperliquid's public list of your orders. Empty. There is nothing for anyone to aim at."
+ },
+ {
+  "n": 8,
+  "name": "Watching",
+  "text": "So who watches the price? A sealed computer: a secure enclave running on NEAR's OutLayer. Every three seconds it reads your envelope straight from NEAR, from two independent sources that must agree, so nobody can slip it a fake. It checks the live price, and waits. Even the people running it can't see inside."
+ },
+ {
+  "n": 9,
+  "name": "It fires",
+  "text": "When the price crosses your level, the enclave closes your position on Hyperliquid and signs a receipt. NEAR checks that signature before it records anything. Here is a real order, sealed in a browser, that the enclave opened and settled on NEAR testnet. And here is the full fire, run in simulation against the real enclave program."
+ },
+ {
+  "n": 10,
+  "name": "Safety net",
+  "text": "And if Blindstop is ever offline, you can add a safety net: a backup stop near your liquidation price, far away from your real one. You're never left unprotected."
+ },
+ {
+  "n": 11,
+  "name": "Proof",
+  "text": "After it closes, you can reveal what you sealed, and anyone can check it matches what NEAR stored from the start. Genuine."
+ },
+ {
+  "n": 12,
+  "name": "It holds up",
+  "text": "We attacked it ourselves: forged receipts, replayed orders, tampered envelopes, someone else's wallet. Every attack was refused. And the enclave can only close positions. It has no way to withdraw or move anyone's money."
+ },
+ {
+  "n": 13,
+  "name": "Claim",
+  "text": "Blindstop. Your stops, hidden until the moment they fire."
+ },
+ {
+  "n": 14,
+  "name": "End card",
+  "text": "Built on NEAR. Open source. Try it on testnet."
+ }
+]

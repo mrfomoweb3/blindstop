@@ -1,0 +1,47 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+
+.ax { position: absolute; left: 320px; top: 240px; height: 700px; width: 2px; background: #2b2e29; }
+.mk { position: absolute; left: 320px; width: 1300px; border-top: 3px solid #858980; }
+.mk span { position: absolute; left: 30px; top: -46px; font-size: 32px; color: #858980; }
+.hid { border-top: 3px dashed #c6f432; } .hid span { color: #c6f432; }
+.net { border-top-color: #f1f2ee; } .net span { color: #f1f2ee; }
+.liq { border-top-color: #f0b545; } .liq span { color: #f0b545; }
+</style>
+  <div id="root" data-composition-id="s10" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s10-cap" class="line" style="left:120px;top:90px;font-size:64px"><span class="w ">A</span> <span class="w ">safety</span> <span class="w ">net,</span> <span class="w ">just</span> <span class="w ">in</span> <span class="w ">case.</span></div>
+    <div class="ax"></div>
+    <div id="s10-entry" class="mk" style="top:300px"><span>entry 68,046</span></div>
+    <div id="s10-stop" class="mk hid" style="top:470px"><span>your hidden stop · 66,000 · nobody sees it</span></div>
+    <div id="s10-net" class="mk net" style="top:760px"><span>safety net · 47,900 · public, far away</span></div>
+    <div id="s10-liq" class="mk liq" style="top:840px"><span>liquidation · 46,952</span></div>
+  </div>
+  <script>
+    const D = 12.03;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    wordsIn("#s10-cap .w", 0.2);
+    tl.fromTo("#s10-entry", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.6, ease: "expo.out", transformOrigin: "0 50%" }, 0.5);
+    tl.fromTo("#s10-stop", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.6, ease: "expo.out", transformOrigin: "0 50%" }, 0.8);
+    tl.fromTo("#s10-liq", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.6, ease: "expo.out", transformOrigin: "0 50%" }, 5.36);
+    tl.fromTo("#s10-net", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.6, ease: "expo.out", transformOrigin: "0 50%" }, 6.47);
+
+    window.__timelines["s10"] = tl;
+  </script>
+</template>

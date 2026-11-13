@@ -1,0 +1,39 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+</style>
+  <div id="root" data-composition-id="s11" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s11-k" class="kicker" style="left:120px;top:96px">Check a stop</div>
+    <div id="s11-cap" class="line" style="left:120px;top:150px;font-size:64px;max-width:1700px"><span class="w ">Anyone</span> <span class="w ">can</span> <span class="w ">check</span> <span class="w ">it</span> <span class="w ">matches</span> <span class="w ">what</span> <span class="w ">NEAR</span> <span class="w ">stored.</span></div>
+    <div id="s11-shot" class="shot" style="left:210px;top:380px;width:1500px"><img src="assets/ui/genuine-card.png" alt=""></div>
+    <div id="s11-tag" class="tag" style="right:120px;top:100px">Real · stop 6 on testnet</div>
+    <div id="s11-l" class="kicker" style="left:210px;top:860px;color:#f1f2ee;font-size:34px"><span class="w ">Checked</span> <span class="w ">in</span> <span class="w ">your</span> <span class="w ">browser,</span> <span class="w ">against</span> <span class="w ">what</span> <span class="w ">NEAR</span> <span class="w ">stored</span> <span class="w ">the</span> <span class="w ">moment</span> <span class="w ">it</span> <span class="w ">was</span> <span class="w ">set.</span></div>
+  </div>
+  <script>
+    const D = 8.62;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    tl.fromTo("#s11-k", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.1);
+    wordsIn("#s11-cap .w", 0.4);
+    tl.fromTo("#s11-shot", { opacity: 0, y: 60, scale: 1.04 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+    tl.fromTo("#s11-tag", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.8);
+    wordsIn("#s11-l .w", 4.59, 0.06);
+
+    window.__timelines["s11"] = tl;
+  </script>
+</template>

@@ -1,0 +1,51 @@
+<template>
+  <style>
+@font-face { font-family: "Geist"; src: url("assets/fonts/geist-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+#root { position: absolute; inset: 0; overflow: hidden; font-family: "Geist", sans-serif; color: #f1f2ee; }
+.app-ground { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% 45%, #121411 0%, #090a09 70%); }
+.shot { position: absolute; border-radius: 28px; border: 1px solid #2b2e29; box-shadow: 0 40px 80px rgba(0,0,0,.55); overflow: hidden; }
+.shot img { display: block; width: 100%; height: auto; }
+.kicker { position: absolute; font-size: 30px; font-weight: 500; color: #858980; letter-spacing: -0.01em; }
+.line { position: absolute; font-weight: 300; font-size: 76px; letter-spacing: -0.03em; line-height: 1.05; }
+.line .w { display: inline-block; }
+.mono { font-family: "Geist Mono", monospace; }
+.lime { color: #c6f432; }
+.tag { position: absolute; font-size: 28px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; border: 1px solid #2b2e29; color: #858980; background: rgba(9,10,9,.8); }
+
+.steps { position: absolute; left: 1100px; top: 330px; width: 700px; display: grid; gap: 18px; }
+.st { position: relative; height: 96px; border-radius: 22px; border: 1px solid #2b2e29; background: #121411; display: flex; align-items: center; gap: 22px; padding: 0 28px; font-size: 32px; color: #f1f2ee; }
+.num { width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid #858980; display: grid; place-items: center; font-size: 28px; color: #858980; }
+.tick { margin-left: auto; width: 44px; height: 44px; border-radius: 50%; background: #c6f432; color: #0a0b08; display: grid; place-items: center; font-size: 24px; opacity: 0; }
+</style>
+  <div id="root" data-composition-id="s04" data-width="1920" data-height="1080">
+
+    <div class="app-ground"></div>
+    <div id="s04-k" class="kicker" style="left:120px;top:96px">How it works for you</div>
+    <div id="s04-cap" class="line" style="left:120px;top:150px;font-size:64px;max-width:1700px"><span class="w ">Four</span> <span class="w ">steps,</span> <span class="w ">about</span> <span class="w ">a</span> <span class="w ">minute.</span></div>
+    <div id="s04-shot" class="shot" style="left:120px;top:330px;width:900px"><img src="assets/ui/signin-steps.png" alt=""></div>
+    
+    <div class="steps"><div class="st" id="s4-st0"><span class="num">1</span>Sign in with a NEAR wallet<span class="tick" id="s4-tk0">✓</span></div><div class="st" id="s4-st1"><span class="num">2</span>A trading wallet, made in your browser<span class="tick" id="s4-tk1">✓</span></div><div class="st" id="s4-st2"><span class="num">3</span>Add funds<span class="tick" id="s4-tk2">✓</span></div><div class="st" id="s4-st3"><span class="num">4</span>Turn on protection<span class="tick" id="s4-tk3">✓</span></div></div>
+  </div>
+  <script>
+    const D = 9.69;
+    const tl = gsap.timeline({ paused: true });
+    const wordsIn = (sel, at, gap = 0.07) => tl.fromTo(sel, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: gap, ease: "power2.out" }, at);
+
+    tl.fromTo("#s04-k", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.1);
+    wordsIn("#s04-cap .w", 0.4);
+    tl.fromTo("#s04-shot", { opacity: 0, y: 60, scale: 1.04 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+    
+    tl.fromTo("#s4-st0", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 1.67);
+    tl.fromTo("#s4-tk0", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.4)" }, 2.12);
+    tl.fromTo("#s4-st1", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 3.6);
+    tl.fromTo("#s4-tk1", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.4)" }, 4.05);
+    tl.fromTo("#s4-st2", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 5.53);
+    tl.fromTo("#s4-tk2", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.4)" }, 5.98);
+    tl.fromTo("#s4-st3", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 7.47);
+    tl.fromTo("#s4-tk3", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.4)" }, 7.92);
+
+    window.__timelines["s04"] = tl;
+  </script>
+</template>
