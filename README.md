@@ -8,7 +8,6 @@ Blindstop keeps your stop-loss and take-profit levels off Hyperliquid's public o
 
 Built at NEAR HACKATHON. Tracks: Privacy & Private AI · Unstoppable DeFi · AI Security & Defense.
 
-> Gloam hides who you are. Blindstop hides where your stops are.
 
 ## Demo
 
@@ -16,7 +15,7 @@ Built at NEAR HACKATHON. Tracks: Privacy & Private AI · Unstoppable DeFi · AI 
 
 ![Blindstop](docs/screenshot.png)
 
-- Live app (testnet): **https://blindstop-five.vercel.app**. Try [Check a stop](https://blindstop-five.vercel.app/verify) with stop `6`, or the live [Status](https://blindstop-five.vercel.app/watcher) page.
+- Live app (testnet): **https://blindstop.mrfomolabs.xyz/**. Try [Check a stop](https://blindstop.mrfomolabs.xyz/verify) with stop `6`, or the live [Status](https://blindstop.mrfomolabs.xyz/watcher) page.
 - Plain-English guide (PDF): [docs/explainer/Blindstop-plain-English-guide.pdf](docs/explainer/Blindstop-plain-English-guide.pdf)
 - Contract on NEAR testnet: [`blindstop.testnet`](https://testnet.nearblocks.io/address/blindstop.testnet)
 
