@@ -390,4 +390,4 @@ MIT, see [LICENSE](LICENSE).
 - [NEAR](https://near.org) and [OutLayer](https://outlayer.ai) for the contract platform and TEE execution; OutLayer's documentation and connector examples informed the manifest and sealed-storage patterns.
 - [Hyperliquid](https://hyperliquid.xyz); signing vectors come from the official `hyperliquid-python-sdk` (0.24.0).
 - Libraries: `near-sdk`, `@near-wallet-selector/*`, `@near-js/transactions`, the OutLayer SDK, `viem`, `@noble/*`, RustCrypto crates, `borsh`, `wasmtime`, Next.js, Tailwind CSS, zod, Vitest. `@gloamtrade/sdk` was evaluated for funding.
-- Code was written with Claude Code.
+
