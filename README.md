@@ -368,11 +368,10 @@ make help   # test, harness, build, keeper, attacks, golden, vectors, verify
 - [x] Web app with trade panel, hidden stops, history, proof check and status
 - [x] 14-scenario harness on the real wasm; 9 attacks refused on testnet
 - [ ] Live golden path recorded on Hyperliquid testnet (needs test USDC)
-- [ ] Hosted web app and keeper
+- [x] Hosted web app (Vercel) and keeper (Fly.io)
 - [ ] Lock contract ownership or move it to a DAO
 - [ ] More than one keeper operator
 - [ ] One-step private funding once Gloam supports cash out to Arbitrum
-- [ ] Mainnet
 
 ## Contributing
 
@@ -388,7 +387,7 @@ MIT, see [LICENSE](LICENSE).
 
 ## Team and acknowledgements
 
-- Built by [mrfomoweb3](https://github.com/mrfomoweb3) at NEAR HACKATHON. Other entry by the same team: [VEIL](https://github.com/mrfomoweb3/veil); the two projects share no code.
+- Built by [mrfomoweb3](https://github.com/mrfomoweb3) and [nddic](https://github.com/nddic) at NEAR HACKATHON. Other entry by the same team: [VEIL](https://github.com/mrfomoweb3/veil); the two projects share no code.
 - [NEAR](https://near.org) and [OutLayer](https://outlayer.ai) for the contract platform and TEE execution; OutLayer's documentation and connector examples informed the manifest and sealed-storage patterns.
 - [Hyperliquid](https://hyperliquid.xyz); signing vectors come from the official `hyperliquid-python-sdk` (0.24.0).
 - Libraries: `near-sdk`, `@near-wallet-selector/*`, `@near-js/transactions`, the OutLayer SDK, `viem`, `@noble/*`, RustCrypto crates, `borsh`, `wasmtime`, Next.js, Tailwind CSS, zod, Vitest. `@gloamtrade/sdk` was evaluated for funding.
