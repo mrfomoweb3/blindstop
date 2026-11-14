@@ -281,6 +281,7 @@ video                 the demo film (HyperFrames project)
 | Enclave keys (pinned in the contract) | x25519 `edb14684…2e19d09`, ed25519 `8e355b62…05a7293` |
 | Hyperliquid agent | `0xad9043b5f362ea82986e035d6ddb2a684f01e077` |
 | Keeper account | `blindstop-keeper.testnet` |
+| Keeper service | [blindstop-keeper.fly.dev/health](https://blindstop-keeper.fly.dev/health) (Fly.io, one always-on machine) |
 | Web app | [blindstop-five.vercel.app](https://blindstop-five.vercel.app) (Vercel, root directory `web`) |
 
 All of these are in [deploy/testnet.json](deploy/testnet.json). To deploy your own contract, enclave and keeper, see [docs/operations.md](docs/operations.md).
@@ -291,7 +292,15 @@ BLINDSTOP_CONTRACT=you.testnet make build-enclave     # prints the wasm sha256
 make web                                              # production build of the web app
 ```
 
-The keeper ships with a `Dockerfile` and `fly.toml` for hosting.
+The keeper runs on Fly.io from `keeper/fly.toml` and `keeper/Dockerfile` (the root `.dockerignore` keeps the build context to the files it needs):
+
+```bash
+fly apps create <name>
+grep -E '^(KEEPER_PRIVATE_KEY|OUTLAYER_PAYMENT_KEY)=' keeper/.env | fly secrets import -c keeper/fly.toml --stage
+fly deploy . -c keeper/fly.toml --remote-only
+```
+
+Run one keeper per NEAR key: two processes signing with the same key race on its nonce.
 
 ## Usage / API
 

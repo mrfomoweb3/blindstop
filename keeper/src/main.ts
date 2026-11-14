@@ -21,7 +21,8 @@ const server = createServer((req, res) => {
   const m = keeper.metrics;
   if (req.url === "/health") {
     const now = Date.now();
-    const healthy = m.lastOkTickAt !== null && now - m.lastOkTickAt < Math.max(30_000, cfg.tickIntervalMs * 10);
+    // Healthy while a tick succeeded within two call windows: slow OutLayer runs are not an outage.
+    const healthy = m.lastOkTickAt !== null && now - m.lastOkTickAt < Math.max(30_000, cfg.tickIntervalMs * 10, cfg.callTimeoutMs * 2);
     res.writeHead(healthy ? 200 : 503, { "content-type": "application/json", "access-control-allow-origin": "*" });
     res.end(
       JSON.stringify({

@@ -5,6 +5,8 @@ RUN corepack enable
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared/package.json packages/shared/
 COPY keeper/package.json keeper/
+COPY web/package.json web/
+COPY scripts/package.json scripts/
 RUN pnpm install --frozen-lockfile --prod --filter @blindstop/keeper...
 
 FROM node:24-slim

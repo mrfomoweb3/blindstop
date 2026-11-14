@@ -1,0 +1,11 @@
+# Only what keeper/Dockerfile needs. Everything else (6 GB of build output, secrets) stays out of the build context.
+*
+!package.json
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
+!packages/shared/package.json
+!packages/shared/src
+!keeper/package.json
+!keeper/src
+!web/package.json
+!scripts/package.json
