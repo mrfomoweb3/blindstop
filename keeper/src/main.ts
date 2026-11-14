@@ -15,7 +15,7 @@ const chain: Chain = {
   heartbeat: (r) => signer.call(cfg.contract, "heartbeat", { report: r.report, sig: r.sig }, 20_000_000_000_000n),
 };
 const enclave = new OutLayerEnclave(cfg.outlayerApi, cfg.outlayerProject, cfg.paymentKey, cfg.callTimeoutMs);
-const keeper = new Keeper(enclave, chain, { intervalMs: cfg.tickIntervalMs, heartbeatEvery: cfg.heartbeatEvery });
+const keeper = new Keeper(enclave, chain, { intervalMs: cfg.tickIntervalMs, heartbeatEvery: cfg.heartbeatEvery, heartbeatMaxGapMs: cfg.heartbeatMaxGapMs });
 
 const server = createServer((req, res) => {
   const m = keeper.metrics;

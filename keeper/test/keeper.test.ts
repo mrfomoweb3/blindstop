@@ -78,6 +78,21 @@ describe("keeper", () => {
     expect(c.heartbeats).toBe(2);
   });
 
+  it("heartbeats when too long has passed since the last one, even before the Nth tick", async () => {
+    const e = new FakeEnclave();
+    const c = new FakeChain();
+    let now = 1_000_000;
+    const k = new Keeper(e, c, { intervalMs: 1000, heartbeatEvery: 100, heartbeatMaxGapMs: 20_000, now: () => now });
+    await k.tickOnce(); // first tick: nothing recorded yet, so overdue
+    expect(c.heartbeats).toBe(1);
+    now += 5_000;
+    await k.tickOnce(); // 5 s later: not due
+    expect(c.heartbeats).toBe(1);
+    now += 45_000;
+    await k.tickOnce(); // a slow 45 s gap: due again
+    expect(c.heartbeats).toBe(2);
+  });
+
   it("never overlaps ticks", async () => {
     const e = new FakeEnclave();
     e.delayMs = 50;

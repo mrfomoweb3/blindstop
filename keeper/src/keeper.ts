@@ -4,7 +4,7 @@
  *
  *  every TICK_INTERVAL_MS (never overlapping):
  *    enclave.tick() ─▶ for each fire report: record_fire  (deduped for DEDUPE_MS)
- *                    └▶ every Nth tick, or when it settled something: heartbeat
+ *                    └▶ every Nth tick, after heartbeatMaxGapMs without one, or when it settled something: heartbeat
  */
 import type { Enclave, EnclaveCall, SignedReport } from "./outlayer.ts";
 import { log } from "./log.ts";
@@ -17,6 +17,8 @@ export interface Chain {
 export interface KeeperOptions {
   intervalMs: number;
   heartbeatEvery: number;
+  /** Also heartbeat once this long has passed since the last one (0 = off), so slow enclave runs still keep /watcher fresh. */
+  heartbeatMaxGapMs?: number;
   dedupeMs?: number;
   now?: () => number;
 }
@@ -71,11 +73,12 @@ export class Keeper {
   private running = false;
   private stopped = false;
   private tickCount = 0;
+  private lastHeartbeatAt = 0;
 
   constructor(enclave: Enclave, chain: Chain, opts: KeeperOptions) {
     this.enclave = enclave;
     this.chain = chain;
-    this.opts = { dedupeMs: 60_000, now: () => Date.now(), ...opts };
+    this.opts = { dedupeMs: 60_000, heartbeatMaxGapMs: 0, now: () => Date.now(), ...opts };
   }
 
   start() {
@@ -157,12 +160,15 @@ export class Keeper {
         }
       }
 
-      if (settled > 0 || this.tickCount % this.opts.heartbeatEvery === 0) {
+      const gap = this.opts.heartbeatMaxGapMs;
+      const overdue = gap > 0 && this.opts.now() - this.lastHeartbeatAt >= gap;
+      if (settled > 0 || overdue || this.tickCount % this.opts.heartbeatEvery === 0) {
         try {
           const res = await this.chain.heartbeat(out.heartbeat);
           if (res.ok) {
             m.heartbeatsSubmitted++;
             m.lastHeartbeatTx = res.hash;
+            this.lastHeartbeatAt = this.opts.now();
             log("debug", "heartbeat recorded", { tx: res.hash, orders_seen: out.stats.orders_seen });
           } else {
             m.heartbeatErrors++;

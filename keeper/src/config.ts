@@ -22,7 +22,8 @@ const Env = z.object({
   OUTLAYER_PAYMENT_KEY: z.string().regex(/^[a-z0-9._-]+:\d+:[0-9a-f]+$/),
   TICK_INTERVAL_MS: z.coerce.number().int().min(500).default(3000),
   HEARTBEAT_EVERY: z.coerce.number().int().min(1).default(10),
-  CALL_TIMEOUT_MS: z.coerce.number().int().min(1000).default(45_000),
+  HEARTBEAT_MAX_GAP_MS: z.coerce.number().int().min(0).default(20_000),
+  CALL_TIMEOUT_MS: z.coerce.number().int().min(1000).default(120_000),
   PORT: z.coerce.number().int().default(8787),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 });
@@ -38,6 +39,7 @@ export type Config = {
   paymentKey: string;
   tickIntervalMs: number;
   heartbeatEvery: number;
+  heartbeatMaxGapMs: number;
   callTimeoutMs: number;
   port: number;
   logLevel: "debug" | "info" | "warn" | "error";
@@ -75,6 +77,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     paymentKey: e.OUTLAYER_PAYMENT_KEY,
     tickIntervalMs: e.TICK_INTERVAL_MS,
     heartbeatEvery: e.HEARTBEAT_EVERY,
+    heartbeatMaxGapMs: e.HEARTBEAT_MAX_GAP_MS,
     callTimeoutMs: e.CALL_TIMEOUT_MS,
     port: e.PORT,
     logLevel: e.LOG_LEVEL,

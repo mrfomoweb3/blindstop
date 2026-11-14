@@ -16,7 +16,7 @@ Built at NEAR HACKATHON. Tracks: Privacy & Private AI · Unstoppable DeFi · AI 
 
 ![Blindstop](docs/screenshot.png)
 
-- Live app: _add link_ (runs locally against testnet today, see [How to test](#how-to-test))
+- Live app (testnet): **https://blindstop-five.vercel.app**. Try [Check a stop](https://blindstop-five.vercel.app/verify) with stop `6`, or the live [Status](https://blindstop-five.vercel.app/watcher) page.
 - Plain-English guide (PDF): [docs/explainer/Blindstop-plain-English-guide.pdf](docs/explainer/Blindstop-plain-English-guide.pdf)
 - Contract on NEAR testnet: [`blindstop.testnet`](https://testnet.nearblocks.io/address/blindstop.testnet)
 
@@ -238,7 +238,8 @@ pnpm install
 | `OUTLAYER_API` | OutLayer API base URL | No |
 | `TICK_INTERVAL_MS` | Milliseconds between ticks (default 3000) | No |
 | `HEARTBEAT_EVERY` | Submit a heartbeat every N ticks (default 10) | No |
-| `CALL_TIMEOUT_MS` | Enclave call timeout (default 45000) | No |
+| `HEARTBEAT_MAX_GAP_MS` | Also heartbeat when this long has passed without one, so `/watcher` stays fresh when enclave runs are slow (default 20000; 0 = off) | No |
+| `CALL_TIMEOUT_MS` | Enclave call timeout (default 120000) | No |
 | `PORT` | Port for `/health` and `/metrics` (default 8787) | No |
 | `LOG_LEVEL` | Log level (default `info`) | No |
 
@@ -280,7 +281,7 @@ video                 the demo film (HyperFrames project)
 | Enclave keys (pinned in the contract) | x25519 `edb14684…2e19d09`, ed25519 `8e355b62…05a7293` |
 | Hyperliquid agent | `0xad9043b5f362ea82986e035d6ddb2a684f01e077` |
 | Keeper account | `blindstop-keeper.testnet` |
-| Web app | _add link_ |
+| Web app | [blindstop-five.vercel.app](https://blindstop-five.vercel.app) (Vercel, root directory `web`) |
 
 All of these are in [deploy/testnet.json](deploy/testnet.json). To deploy your own contract, enclave and keeper, see [docs/operations.md](docs/operations.md).
 
