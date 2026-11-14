@@ -11,7 +11,7 @@ Built at NEAR HACKATHON. Tracks: Privacy & Private AI · Unstoppable DeFi · AI 
 
 ## Demo
 
-> 🎥 Demo video: _add link_ (3-minute walkthrough; source in [video/](video/))
+> 🎥 Demo video: https://x.com/xcessweb3/status/2121593731744731151?a=gcrJFyqreUZU5TpO7IU&s=20 (3-minute walkthrough; source in [video/](video/))
 
 ![Blindstop](docs/screenshot.png)
 
